@@ -1,11 +1,17 @@
-(function () {
-  const alias = 'clock';
+(() => {
+  const alias = "clock";
+  // eslint-disable-next-line global-require
+  const path = require("path");
 
-  const load = (element) => {
+  /** @type LoadWidget */
+  const load = ({ element, onStateChange, initialState }) => {
     (async () => {
-      const path = require('path');
+      // eslint-disable-next-line no-param-reassign
       element.innerHTML = `
-        <link rel="stylesheet" href="file://${path.resolve(process.cwd(), './examples/clock.css')}"/>
+        <link rel="stylesheet" href="file://${path.resolve(
+          process.cwd(),
+          "./examples/clock.css"
+        )}"/>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet"/>
         <div class="clock-widget">
           <div class="text">
@@ -18,10 +24,10 @@
         </div>
       `;
 
-      const clockNode = element.querySelector('.clock-widget');
-      const hourNode = clockNode.querySelector('.hour');
-      const minuteNode = clockNode.querySelector('.minute');
-      const barNode = clockNode.querySelector('.progress .bar');
+      const clockNode = element.querySelector(".clock-widget");
+      const hourNode = clockNode.querySelector(".hour");
+      const minuteNode = clockNode.querySelector(".minute");
+      const barNode = clockNode.querySelector(".progress .bar");
 
       function formatNumber(n) {
         return n < 10 ? `0${n}` : n;
@@ -30,6 +36,7 @@
       function setTime(node, value) {
         const parsed = formatNumber(value);
         if (node.innerHTML !== parsed) {
+          // eslint-disable-next-line no-param-reassign
           node.innerHTML = parsed;
         }
       }

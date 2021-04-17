@@ -1,15 +1,19 @@
 ((): void => {
-  const scripts: { [k: string]: boolean }= {};
+  const scripts: { [k: string]: boolean } = {};
 
   const loadScript = async (src: string, node: HTMLElement = document.body) => {
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     // widget.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms';
     script.src = src;
     await new Promise<void>((resolve, reject) => {
-
-      script.addEventListener('load', () => {
+      script.addEventListener("load", () => {
         node.removeChild(script);
         resolve();
+      });
+
+      script.addEventListener("error", () => {
+        node.removeChild(script);
+        reject();
       });
 
       node.appendChild(script);
@@ -21,6 +25,6 @@
       if (!scripts[src]) {
         await loadScript(src);
       }
-    }
-  }
+    },
+  };
 })();

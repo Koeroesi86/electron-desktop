@@ -1,13 +1,19 @@
-(function () {
-  const alias = 'memory';
+(() => {
+  // eslint-disable-next-line global-require
+  const si = require("systeminformation");
+  // eslint-disable-next-line global-require
+  const path = require("path");
+  const alias = "memory";
 
-  const load = (element) => {
+  /** @type LoadWidget */
+  const load = ({ element }) => {
     (async () => {
-      const si = require('systeminformation');
-      const path = require('path');
-
+      // eslint-disable-next-line no-param-reassign
       element.innerHTML = `
-      <link rel="stylesheet" href="file://${path.resolve(process.cwd(), './examples/memory.css')}"/>
+      <link rel="stylesheet" href="file://${path.resolve(
+        process.cwd(),
+        "./examples/memory.css"
+      )}"/>
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet"/>
       <div class="memory-widget">
         <div>RAM</div>
@@ -15,7 +21,7 @@
       </div>
     `;
 
-      const usageNode = element.querySelector('.usage');
+      const usageNode = element.querySelector(".usage");
 
       function refresh() {
         (async () => {

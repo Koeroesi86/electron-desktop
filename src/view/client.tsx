@@ -2,17 +2,15 @@ import React from "react";
 import { render } from "react-dom";
 import "./registries/script";
 import "./registries/widget";
-import App from "./component/app";
+import { LoadWidget, LoadWidgetPayload, UnloadWidget } from "../types";
+import App from "./components/app";
 
 declare global {
-  type UnloadWidget = (element: ShadowRoot) => void;
-  type LoadWidget = (element: ShadowRoot) => void;
-
   interface WidgetRegistry {
     register: (alias: string, load: LoadWidget, unload?: UnloadWidget) => void;
     unregister: (alias: string) => void;
     hasAlias: (alias: string) => boolean;
-    load: (alias: string, element: ShadowRoot) => void;
+    load: (alias: string, payload: LoadWidgetPayload) => void;
     unload: (alias: string, element: ShadowRoot) => void;
   }
 
@@ -27,8 +25,5 @@ declare global {
 }
 
 if (window) {
-  render(
-    <App/>,
-    document.getElementById('root')
-  );
+  render(<App />, document.getElementById("root"));
 }

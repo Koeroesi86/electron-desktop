@@ -1,13 +1,19 @@
-(function () {
-  const alias = 'disk';
+(() => {
+  const alias = "disk";
+  // eslint-disable-next-line global-require
+  const si = require("systeminformation");
+  // eslint-disable-next-line global-require
+  const path = require("path");
 
-  const load = (element) => {
+  /** @type LoadWidget */
+  const load = ({ element }) => {
     (async () => {
-      const si = require('systeminformation');
-      const path = require('path');
-
+      // eslint-disable-next-line no-param-reassign
       element.innerHTML = `
-        <link rel="stylesheet" href="file://${path.resolve(process.cwd(), './examples/disk.css')}"/>
+        <link rel="stylesheet" href="file://${path.resolve(
+          process.cwd(),
+          "./examples/disk.css"
+        )}"/>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet"/>
         <div class="disk-widget">
           <div>Disk</div>
@@ -15,7 +21,7 @@
         </div>
     `;
 
-      const usageNode = element.querySelector('.stats');
+      const usageNode = element.querySelector(".stats");
 
       function refresh() {
         (async () => {
@@ -25,14 +31,17 @@
             // si.cpuTemperature().then(data => console.log('cpuTemperature', data));
             // si.currentLoad().then(data => console.log('currentLoad', data));
             const data = await si.fsSize();
-            const used = data.map(d => (
-              `<div class="disk">
-              <div class="name">${d.fs.replace(/:$/, '')}</div>
-              <div class="usage">${Math.round(d.use)}%</div>
-            </div>`
-            )).join('\n');
-
-            usageNode.innerHTML = used;
+            usageNode.innerHTML = data
+              .map(
+                (d) =>
+                  `
+                    <div class="disk">
+                      <div class="name">${d.fs.replace(/:$/, "")}</div>
+                      <div class="usage">${Math.round(d.use)}%</div>
+                    </div>
+                  `
+              )
+              .join("\n");
           } catch (e) {
             console.error(e);
           }

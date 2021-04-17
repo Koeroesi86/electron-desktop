@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
+    "baseUrl": "src",
     "noImplicitAny": false,
     "module": "es6",
     "moduleResolution": "Node",
@@ -8,6 +9,10 @@
     "jsx": "react",
     "allowJs": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@app-types": ["types/index.ts"],
+      "@app-constants": ["constants/index.ts"]
+    }
   }
 }

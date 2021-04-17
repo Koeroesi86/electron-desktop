@@ -8,7 +8,8 @@ interface WrapperProps {
 }
 
 const blockedProps = ['top', 'left', 'width', 'height'];
-const WidgetWrapper = styled.div.withConfig<WrapperProps>({ shouldForwardProp: (p) => !blockedProps.includes(p) })`
+
+const AbsoluteWrapper = styled.div.withConfig<WrapperProps>({ shouldForwardProp: (p) => !blockedProps.includes(p) })`
   position: absolute;
   top: ${(props) => `${props.top}%`};
   left: ${(props) => `${props.left}%`};
@@ -16,4 +17,4 @@ const WidgetWrapper = styled.div.withConfig<WrapperProps>({ shouldForwardProp: (
   height: ${(props) => `${props.height}%`};
 `;
 
-export default WidgetWrapper;
+export default AbsoluteWrapper;
