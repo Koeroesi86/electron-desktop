@@ -1,10 +1,10 @@
 import { IpcRendererEvent } from "electron";
 import { RevivableComponentType } from "@koeroesi86/react-reviver";
-import { WrapperProps } from "../view/components/absolute-wrapper";
-import { FixedWrapperProps } from "../view/components/fixed-wrapper";
-import { WidgetControlsProps } from "../view/components/widget-controls";
-import { WidgetProps } from "../view/components/widget";
-import { WorkspaceProps } from "../view/components/workspace";
+import { WrapperProps } from "../components/absolute-wrapper";
+import { FixedWrapperProps } from "../components/fixed-wrapper";
+import { WidgetControlsProps } from "../components/widget-controls";
+import { WidgetProps } from "../components/widget";
+import { WorkspaceProps } from "../components/workspace";
 
 export interface LoadWidgetPayload {
   element: ShadowRoot;

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { WidgetStateSave } from "@app-types";
-import { WIDGET_SAVE_STATE_CHANNEL } from "../../../constants";
+import { WIDGET_SAVE_STATE_CHANNEL } from "@constants";
+import useIpc from "@hooks/useIpc";
 import AbsoluteWrapper from "../absolute-wrapper";
-import useIpc from "../../hooks/useIpc";
 
 export interface WidgetProps {
   alias: string;

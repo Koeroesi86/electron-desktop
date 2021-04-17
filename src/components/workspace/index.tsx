@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Listener, RevivableComponent, WidgetInstance, WorkspaceState, WorkspaceStateSave } from "@app-types";
 import { ReviverLayout } from "@koeroesi86/react-reviver";
-import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "../../../constants";
+import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "@constants";
+import useIpc from "@hooks/useIpc";
 import FixedWrapper from "../fixed-wrapper";
-import useIpc from "../../hooks/useIpc";
 
 const wait = (delay: number = 1) => new Promise<void>((r) => setTimeout(r, delay));
 

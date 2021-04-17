@@ -12,7 +12,9 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@app-types": ["types/index.ts"],
-      "@app-constants": ["constants/index.ts"]
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@constants": ["constants/index.ts"]
     }
   }
 }

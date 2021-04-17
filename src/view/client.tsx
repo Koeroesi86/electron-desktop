@@ -2,8 +2,8 @@ import React from "react";
 import { render } from "react-dom";
 import "./registries/script";
 import "./registries/widget";
-import { LoadWidget, LoadWidgetPayload, UnloadWidget } from "../types";
-import App from "./components/app";
+import { LoadWidget, LoadWidgetPayload, UnloadWidget } from "@app-types";
+import App from "../components/app";
 
 declare global {
   interface WidgetRegistry {

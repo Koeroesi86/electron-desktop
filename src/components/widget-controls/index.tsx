@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Listener, WidgetBounds, WorkspaceEdit } from "@app-types";
-import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL } from "../../../constants";
+import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL } from "@constants";
+import useIpc from "@hooks/useIpc";
 import AbsoluteWrapper from "../absolute-wrapper";
-import useIpc from "../../hooks/useIpc";
 
 export interface WidgetControlsProps {
   top: number;
