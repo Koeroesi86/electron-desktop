@@ -5,7 +5,7 @@ import { WIDGET_SAVE_STATE_CHANNEL } from "../../../constants";
 import AbsoluteWrapper from "../absolute-wrapper";
 import useIpc from "../../hooks/useIpc";
 
-interface WidgetProps {
+export interface WidgetProps {
   alias: string;
   id: string;
   initialState: string;

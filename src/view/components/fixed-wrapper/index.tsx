@@ -1,15 +1,15 @@
 import styled from "styled-components";
 
-interface Props {
+export interface FixedWrapperProps {
   top?: number;
   left?: number;
   width?: number;
   height?: number;
 }
 
-const blockedProps = ['top', 'left', 'width', 'height'];
+const blockedProps = ["top", "left", "width", "height"];
 
-const FixedWrapper = styled.div.withConfig<Props>({ shouldForwardProp: (p) => !blockedProps.includes(p) })`
+const FixedWrapper = styled.div.withConfig<FixedWrapperProps>({ shouldForwardProp: (p) => !blockedProps.includes(p) })`
   position: fixed;
   top: ${(props) => `${props.top}%`};
   left: ${(props) => `${props.left}%`};
