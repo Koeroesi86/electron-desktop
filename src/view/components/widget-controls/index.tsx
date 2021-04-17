@@ -11,8 +11,6 @@ export interface WidgetControlsProps {
   width: number;
   height: number;
   id: string;
-  alias: string;
-  initialState: string;
   children?: React.ReactNode;
 }
 

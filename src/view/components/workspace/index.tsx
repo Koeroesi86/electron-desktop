@@ -56,9 +56,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
               left: instance.left,
               width: instance.width,
               height: instance.height,
-              alias: instance.alias,
               id: instance.id,
-              initialState: instance.state,
             },
             children: [{ type: "widget", props: { alias: instance.alias, initialState: instance.state, id: instance.id } }],
           })
