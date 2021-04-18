@@ -8,7 +8,7 @@ import {
   WORKSPACE_EDIT_CHANNEL,
   WORKSPACE_STATE_ACK_CHANNEL,
   WORKSPACE_STATE_CHANNEL,
-} from "../constants";
+} from "@constants";
 import defaultWorkspace from "./defaultWorkspace";
 // eslint-disable-next-line no-undef
 import Timeout = NodeJS.Timeout;
@@ -50,7 +50,6 @@ const createWindow = async (props: WindowProps) => {
       },
     });
 
-    // and load the index.html of the app.
     await win.loadFile(path.resolve(__dirname, "../frontend/main.html"));
 
     const sendState = () => {
@@ -62,9 +61,8 @@ const createWindow = async (props: WindowProps) => {
 
     win.once("ready-to-show", async () => {
       win.show();
-      // @ts-ignore
-      win.openDevTools();
-      win.reload();
+      win.webContents.openDevTools({ mode: "detach" });
+      win.webContents.reload();
 
       let interval: Timeout;
 
@@ -172,6 +170,7 @@ const restoreWindows = async (): Promise<void> => {
 (async () => {
   try {
     await app.whenReady();
+    await new Promise((r) => setTimeout(r, 500));
     await createTray();
     await restoreWindows();
   } catch (e) {

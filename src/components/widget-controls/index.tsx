@@ -53,6 +53,11 @@ const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, h
       width={bounds.width}
       height={bounds.height}
       draggable={editing}
+      onMouseUp={(e) => {
+        if (e.button === 2) {
+          console.log("right click");
+        }
+      }}
       onDragStart={(e) => {
         setDragOffset({
           // @ts-ignore

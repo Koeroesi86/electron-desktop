@@ -1,10 +1,11 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background: transparent;
   }
 
   * {
@@ -15,7 +16,6 @@ const GlobalStyle = createGlobalStyle`
     width: 100vw;
     height: 100vh;
     position: relative;
-    background-color: rgba(255, 255, 255, 0);
     font-family: 'Roboto', Arial, sans-serif;
   }
 `;
