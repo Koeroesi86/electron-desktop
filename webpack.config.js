@@ -1,4 +1,4 @@
-const { spawn } = require("child_process");
+const { exec } = require("child_process");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const { TsconfigPathsPlugin } = require("tsconfig-paths-webpack-plugin");
@@ -8,19 +8,22 @@ const mode = "development";
 
 class SpawnPlugin {
   constructor(options = {}) {
-    this.main = options.command || "";
+    this.command = options.command || "";
     this.message = options.message || "Starting";
     this.name = "SpawnPlugin";
+    this.compilerHook = "watchRun";
   }
 
   apply(compiler) {
-    if (this.main) {
-      const command = this.main.split(" ");
-      compiler.hooks.watchRun.tap(this.name, (c) => {
+    if (this.command) {
+      compiler.hooks[this.compilerHook].tap(this.name, (c) => {
         c.hooks.afterEmit.tap(this.name, () => {
           if (!this.process) {
             console.log(this.message);
-            this.process = spawn(command[0], command.slice(1), { shell: true, stdio: "inherit" });
+            this.process = exec(this.command);
+            this.process.stdout.on("data", (data) => {
+              console.log(data);
+            });
             process.on("beforeExit", () => this.process.kill(0));
           }
         });

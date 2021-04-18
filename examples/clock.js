@@ -1,5 +1,6 @@
 (() => {
   const alias = "clock";
+  const intervals = [];
   // eslint-disable-next-line global-require
   const path = require("path");
 
@@ -8,10 +9,10 @@
     (async () => {
       // eslint-disable-next-line no-param-reassign
       element.innerHTML = `
-        <link rel="stylesheet" href="file://${path.resolve(
-          process.cwd(),
-          "./examples/clock.css"
-        )}"/>
+        <link
+          rel="stylesheet"
+          href="file://${path.resolve(process.cwd(), "./examples/clock.css")}"
+        />
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet"/>
         <div class="clock-widget">
           <div class="text">
@@ -50,9 +51,14 @@
       }
 
       refresh();
-      setInterval(refresh, 500);
+      intervals.push(setInterval(refresh, 500));
     })();
   };
 
-  window.widgetRegistry.register(alias, load);
+  window.widgetRegistry.register(alias, load, () => {
+    intervals.forEach((interval, index) => {
+      clearInterval(interval);
+      intervals.splice(index, 1);
+    });
+  });
 })();
