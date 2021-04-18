@@ -28,16 +28,29 @@
 }
 
 .clock-widget .progress {
-    width: 5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    width: 35%;
     position: relative;
     background: #efefef;
+    overflow: hidden;
 }
 
-.clock-widget .progress .bar {
-    width: 100%;
-    height: 0;
-    background: #25bfb5;
+.clock-widget .progress .indicator {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform-origin: left center;
+    transform: translateY(-50%);
+}
+
+.clock-widget .progress .indicator svg {
+    transform-origin: left center;
+}
+
+.clock-widget .progress .indicator svg circle {
+    stroke: #ccc;
+    fill: none;
+}
+
+.clock-widget .progress .indicator.seconds svg circle {
+    stroke: #25bfb5;
 }

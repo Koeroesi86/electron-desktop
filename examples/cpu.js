@@ -1,9 +1,8 @@
+/* eslint-disable global-require */
 (() => {
   const alias = "cpu";
   const intervals = [];
-  // eslint-disable-next-line global-require
   const si = require("systeminformation");
-  // eslint-disable-next-line global-require
   const path = require("path");
 
   /** @type LoadWidget */
@@ -17,12 +16,14 @@
       />
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet"/>
       <div class="cpu-widget">
-        <div>CPU</div>
-        <div class="usage"></div>
+        <div class="title">CPU</div>
+        <div class="progress">
+          <div class="bar"></div>
+        </div>
       </div>
     `;
 
-      const usageNode = element.querySelector(".usage");
+      const usageNode = element.querySelector(".progress .bar");
 
       function refresh() {
         (async () => {
@@ -33,7 +34,7 @@
             // si.currentLoad().then(data => console.log('currentLoad', data));
             const currentLoad = await si.currentLoad();
 
-            usageNode.innerHTML = `${Math.round(currentLoad.currentLoad)}%`;
+            usageNode.style.width = `${Math.round(currentLoad.currentLoad)}%`;
           } catch (e) {
             console.error(e);
           }
@@ -41,7 +42,7 @@
       }
 
       refresh();
-      intervals.push(setInterval(refresh, 500));
+      intervals.push(setInterval(refresh, 2000));
     })();
   };
 

@@ -38,7 +38,9 @@
                   `
                     <div class="disk">
                       <div class="name">${d.fs.replace(/:$/, "")}</div>
-                      <div class="usage">${Math.round(d.use)}%</div>
+                      <div class="usage">
+                        <div class="bar" style="width: ${Math.round(d.use)}%"></div>
+                      </div>
                     </div>
                   `
               )

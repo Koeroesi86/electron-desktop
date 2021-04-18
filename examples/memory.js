@@ -1,8 +1,7 @@
+/* eslint-disable global-require */
 (() => {
-  // eslint-disable-next-line global-require
-  const si = require("systeminformation");
-  // eslint-disable-next-line global-require
   const path = require("path");
+  const si = require("systeminformation");
   const alias = "memory";
   const intervals = [];
 
@@ -17,12 +16,14 @@
       />
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet"/>
       <div class="memory-widget">
-        <div>RAM</div>
-        <div class="usage"></div>
+        <div class="title">RAM</div>
+        <div class="progress">
+          <div class="bar"></div>
+        </div>
       </div>
     `;
 
-      const usageNode = element.querySelector(".usage");
+      const usageBarNode = element.querySelector(".progress .bar");
 
       function refresh() {
         (async () => {
@@ -34,7 +35,7 @@
             const data = await si.mem();
             const used = (data.used / data.total) * 100;
 
-            usageNode.innerHTML = `${Math.round(used)}%`;
+            usageBarNode.style.width = `${Math.round(used)}%`;
           } catch (e) {
             console.error(e);
           }
@@ -42,7 +43,7 @@
       }
 
       refresh();
-      intervals.push(setInterval(() => refresh(), 2000));
+      intervals.push(setInterval(() => refresh(), 5000));
     })();
   };
 
