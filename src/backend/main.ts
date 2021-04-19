@@ -31,6 +31,7 @@ const createWindow = async (props: WindowProps) => {
     const win = new BrowserWindow({
       transparent: true,
       frame: false,
+      hasShadow: false,
       maximizable: true,
       resizable: false,
       skipTaskbar: true,
@@ -39,8 +40,9 @@ const createWindow = async (props: WindowProps) => {
       titleBarStyle: "hidden",
       x: props.x,
       y: props.y,
-      width: props.width,
-      height: props.height,
+      // added -1 to solve black window issue
+      width: props.width - 1,
+      height: props.height - 1,
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
@@ -170,7 +172,6 @@ const restoreWindows = async (): Promise<void> => {
 (async () => {
   try {
     await app.whenReady();
-    await new Promise((r) => setTimeout(r, 500));
     await createTray();
     await restoreWindows();
   } catch (e) {
