@@ -14,7 +14,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
   const [hasLoaded, setHasLoaded] = useValue<boolean>(false);
   const [instances, setInstances] = useState<WidgetInstance[]>([]);
   const workspaceStateChannel = useIpc<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
-  const workspaceStateAckChannel = useIpc<WorkspaceState>(WORKSPACE_STATE_ACK_CHANNEL);
+  const workspaceStateAckChannel = useIpc(WORKSPACE_STATE_ACK_CHANNEL);
   const saveWidgetBoundsChannel = useIpc<WorkspaceStateSave>(WIDGET_SAVE_BOUNDS_CHANNEL);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
 
       await wait();
 
-      workspaceStateAckChannel.dispatch();
+      workspaceStateAckChannel.dispatch("");
 
       await Promise.all(widgetScripts.map((src) => window.scriptRegistry.add(src)));
       setInstances(widgetInstances);

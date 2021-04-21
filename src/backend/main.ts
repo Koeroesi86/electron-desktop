@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, screen } from "electron";
+import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
-import { WidgetBounds, WidgetInstance, WidgetStateSave, WorkspaceState } from "@app-types";
+import { WidgetBounds, WidgetInstance, WidgetStateSave, WorkspaceEdit, WorkspaceState } from "@app-types";
 import {
   TRAY_ICON_ID,
   WIDGET_SAVE_BOUNDS_CHANNEL,
@@ -10,6 +10,7 @@ import {
   WORKSPACE_STATE_CHANNEL,
 } from "@constants";
 import defaultWorkspace from "./defaultWorkspace";
+import useIpcMain from "./helpers/useIpcMain";
 // eslint-disable-next-line no-undef
 import Timeout = NodeJS.Timeout;
 
@@ -28,6 +29,11 @@ interface WindowProps {
 
 const createWindow = async (props: WindowProps) => {
   try {
+    const workspaceStateChannel = useIpcMain<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
+    const workspaceStateAckChannel = useIpcMain(WORKSPACE_STATE_ACK_CHANNEL);
+    const widgetStateSaveChannel = useIpcMain<WidgetStateSave>(WIDGET_SAVE_STATE_CHANNEL);
+    const widgetBoundsChannel = useIpcMain<WidgetBounds>(WIDGET_SAVE_BOUNDS_CHANNEL);
+
     const win = new BrowserWindow({
       transparent: true,
       frame: false,
@@ -40,9 +46,8 @@ const createWindow = async (props: WindowProps) => {
       titleBarStyle: "hidden",
       x: props.x,
       y: props.y,
-      // added -1 to solve black window issue
-      width: props.width - 1,
-      height: props.height - 1,
+      width: props.width,
+      height: props.height,
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
@@ -55,10 +60,10 @@ const createWindow = async (props: WindowProps) => {
     await win.loadFile(path.resolve(__dirname, "../frontend/main.html"));
 
     const sendState = () => {
-      win.webContents.send(WORKSPACE_STATE_CHANNEL, {
+      workspaceStateChannel.dispatch(win.webContents, {
         widgetScripts: props.widgetScripts,
         widgetInstances: props.widgetInstances,
-      } as WorkspaceState);
+      });
     };
 
     win.once("ready-to-show", async () => {
@@ -73,19 +78,19 @@ const createWindow = async (props: WindowProps) => {
         interval = setInterval(sendState, 500);
       });
 
-      ipcMain.on(WORKSPACE_STATE_ACK_CHANNEL, (e) => {
+      workspaceStateAckChannel.subscribe((e) => {
         if (e.sender.id === win.id) {
           clearInterval(interval);
           interval = undefined;
         }
       });
 
-      ipcMain.on(WIDGET_SAVE_BOUNDS_CHANNEL, (e, payload: WidgetBounds) => {
+      widgetBoundsChannel.subscribe((e, payload) => {
         // TODO: persist
         console.log(`[${Date.now()}] save-widget-bounds`, payload);
       });
 
-      ipcMain.on(WIDGET_SAVE_STATE_CHANNEL, (e, payload: WidgetStateSave) => {
+      widgetStateSaveChannel.subscribe((e, payload) => {
         // TODO: persist
         console.log(`[${Date.now()}] save-widget-state`, payload);
       });
@@ -98,6 +103,7 @@ const createWindow = async (props: WindowProps) => {
 
 const createTray = async (): Promise<void> => {
   try {
+    const workspaceEditChannel = useIpcMain<WorkspaceEdit>(WORKSPACE_EDIT_CHANNEL);
     tray = new Tray(path.resolve(__dirname, "./image/icon.png"), TRAY_ICON_ID);
     if (process.platform === "win32") {
       tray.destroy();
@@ -120,7 +126,7 @@ const createTray = async (): Promise<void> => {
         label: "Edit mode",
         click: (item) => {
           BrowserWindow.getAllWindows().forEach((w) => {
-            w.webContents.send(WORKSPACE_EDIT_CHANNEL, { isEdit: item.checked });
+            workspaceEditChannel.dispatch(w.webContents, { isEdit: item.checked });
           });
         },
       })
@@ -158,15 +164,16 @@ const restoreWindows = async (): Promise<void> => {
       createWindow({
         widgetScripts: defaultWorkspace.widgetScripts,
         widgetInstances: defaultWorkspace.widgetInstances,
-        x: display.workArea.x,
-        y: display.workArea.y,
+        // added -1 to solve black window issue
+        x: display.workArea.x - 1,
+        y: display.workArea.y - 1,
         width: display.workArea.width,
         height: display.workArea.height,
       })
     )
   );
 
-  BrowserWindow.getAllWindows().forEach((w) => w.reload());
+  BrowserWindow.getAllWindows().forEach((w) => w.webContents.reload());
 };
 
 (async () => {
