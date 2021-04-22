@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { WidgetStateSave } from "@app-types";
 import { WIDGET_SAVE_STATE_CHANNEL } from "@constants";
-import useIpc from "@hooks/useIpc";
+import useChannel from "@hooks/useChannel";
 import AbsoluteWrapper from "../absolute-wrapper";
 
 export interface WidgetProps {
@@ -12,7 +12,7 @@ export interface WidgetProps {
 }
 
 const Widget: React.FC<WidgetProps> = ({ alias, initialState, id }) => {
-  const widgetStateSaveChannel = useIpc<WidgetStateSave>(WIDGET_SAVE_STATE_CHANNEL);
+  const widgetStateSaveChannel = useChannel<WidgetStateSave>(WIDGET_SAVE_STATE_CHANNEL);
   const element = useRef();
 
   useEffect(() => {

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Listener, RevivableComponent, WidgetInstance, WorkspaceState, WorkspaceStateSave } from "@app-types";
 import { ReviverLayout } from "@koeroesi86/react-reviver";
 import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "@constants";
-import useIpc from "@hooks/useIpc";
 import useValue from "@hooks/useValue";
+import useChannel from "@hooks/useChannel";
 import FixedWrapper from "../fixed-wrapper";
 
 const wait = (delay: number = 1) => new Promise<void>((r) => setTimeout(r, delay));
@@ -13,9 +13,9 @@ export interface WorkspaceProps {}
 const Workspace: React.FC<WorkspaceProps> = () => {
   const [hasLoaded, setHasLoaded] = useValue<boolean>(false);
   const [instances, setInstances] = useState<WidgetInstance[]>([]);
-  const workspaceStateChannel = useIpc<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
-  const workspaceStateAckChannel = useIpc(WORKSPACE_STATE_ACK_CHANNEL);
-  const saveWidgetBoundsChannel = useIpc<WorkspaceStateSave>(WIDGET_SAVE_BOUNDS_CHANNEL);
+  const workspaceStateChannel = useChannel<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
+  const workspaceStateAckChannel = useChannel(WORKSPACE_STATE_ACK_CHANNEL);
+  const saveWidgetBoundsChannel = useChannel<WorkspaceStateSave>(WIDGET_SAVE_BOUNDS_CHANNEL);
 
   useEffect(() => {
     if (hasLoaded) {

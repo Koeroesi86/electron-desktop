@@ -38,7 +38,5 @@
     "lint": "eslint --cache --cache-location .cache/eslint/ --ext .ts,.tsx src",
     "build": "rm -rf ./dist && webpack"
   },
-  "dependencies": {
-    "@webcomponents/webcomponentsjs": "^2.5.0"
-  }
+  "dependencies": {}
 }

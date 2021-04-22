@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Listener, WidgetBounds, WorkspaceEdit } from "@app-types";
 import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL } from "@constants";
-import useIpc from "@hooks/useIpc";
 import useValue from "@hooks/useValue";
+import useChannel from "@hooks/useChannel";
 import AbsoluteWrapper from "../absolute-wrapper";
 
 export interface WidgetControlsProps {
@@ -16,8 +16,8 @@ export interface WidgetControlsProps {
 }
 
 const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, height, children }) => {
-  const workspaceEditChannel = useIpc<WorkspaceEdit>(WORKSPACE_EDIT_CHANNEL);
-  const widgetBoundsChannel = useIpc<WidgetBounds>(WIDGET_SAVE_BOUNDS_CHANNEL);
+  const workspaceEditChannel = useChannel<WorkspaceEdit>(WORKSPACE_EDIT_CHANNEL);
+  const widgetBoundsChannel = useChannel<WidgetBounds>(WIDGET_SAVE_BOUNDS_CHANNEL);
   const [bounds, setBounds] = useState<WidgetBounds>({ id, top, left, width, height });
   const [dragOffset, setDragOffset] = useValue<{ x: number; y: number }>({ x: 0, y: 0 });
   const [hasMounted, setHasMounted] = useValue<boolean>(false);
