@@ -22,12 +22,12 @@
           <div class="progress">
             <div class="indicator background">
               <svg viewBox="0 0 200 200">
-                <circle cx="0" cy="100" r="45%" stroke-width="5%" />
+                <path />
               </svg>
             </div>
             <div class="indicator seconds">
-              <svg viewBox="0 0 200 200">
-                <circle cx="0" cy="100" r="45%" stroke-width="5%" />
+              <svg viewBox="0 0 200 200"">
+                <path />
               </svg>
             </div>
           </div>
@@ -39,13 +39,38 @@
       const minuteNode = clockNode.querySelector(".minute");
       const progressNode = clockNode.querySelector(".progress");
       const backgroundNode = clockNode.querySelector(".progress .indicator.background svg");
-      const indicatorNode = clockNode.querySelector(".progress .indicator.seconds svg");
+      const newIndicatorSvg = clockNode.querySelector(".progress .indicator.seconds svg");
+      const newIndicatorNode = clockNode.querySelector(".progress .indicator.seconds svg path");
+
+      function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+        const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+
+        return {
+          x: centerX + radius * Math.cos(angleInRadians),
+          y: centerY + radius * Math.sin(angleInRadians),
+        };
+      }
+
+      function describeArc(x, y, radius, startAngle, endAngle) {
+        const start = polarToCartesian(x, y, radius, endAngle);
+        const end = polarToCartesian(x, y, radius, startAngle);
+
+        const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+        return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y].join(" ");
+      }
+
+      backgroundNode.querySelector("path").setAttribute("d", describeArc(0, 100, 90, 0, 180));
 
       function fixSizes() {
-        indicatorNode.style.width = progressNode.clientWidth;
-        indicatorNode.style.height = progressNode.clientWidth;
-        backgroundNode.style.width = progressNode.clientWidth;
-        backgroundNode.style.height = progressNode.clientWidth;
+        if (backgroundNode.style.width !== progressNode.clientWidth) {
+          backgroundNode.style.width = progressNode.clientWidth;
+          backgroundNode.style.height = progressNode.clientWidth;
+        }
+        if (newIndicatorSvg.style.width !== progressNode.clientWidth) {
+          newIndicatorSvg.style.width = progressNode.clientWidth;
+          newIndicatorSvg.style.height = progressNode.clientWidth;
+        }
       }
 
       function formatNumber(n) {
@@ -65,9 +90,8 @@
 
         setTime(hourNode, date.getHours());
         setTime(minuteNode, date.getMinutes());
-        // barNode.style.height = `${(date.getSeconds() / 60) * 100}%`;
         fixSizes();
-        indicatorNode.style.transform = `rotate(${(date.getSeconds() / 60) * 180 + 180}deg)`;
+        newIndicatorNode.setAttribute("d", describeArc(0, 100, 90, 0, (date.getSeconds() / 60) * 180));
       }
 
       refresh();

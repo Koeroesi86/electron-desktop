@@ -46,11 +46,12 @@
     transform-origin: left center;
 }
 
-.clock-widget .progress .indicator svg circle {
+.clock-widget .progress .indicator svg path {
     stroke: #ccc;
     fill: none;
+    stroke-width: 5%;
 }
 
-.clock-widget .progress .indicator.seconds svg circle {
+.clock-widget .progress .indicator.seconds svg path {
     stroke: #25bfb5;
 }
