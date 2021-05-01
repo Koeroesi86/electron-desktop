@@ -6,16 +6,6 @@ import { WidgetControlsProps } from "../components/widget-controls";
 import { WidgetProps } from "../components/widget";
 import { WorkspaceProps } from "../components/workspace";
 
-export interface LoadWidgetPayload {
-  element: ShadowRoot;
-  initialState: string;
-  onStateChange: (state: string) => void;
-}
-
-export type UnloadWidget = (element: ShadowRoot) => void;
-
-export type LoadWidget = (payload: LoadWidgetPayload) => void;
-
 export interface WidgetScript {
   alias: string;
   uri: string;
@@ -24,7 +14,6 @@ export interface WidgetScript {
 export interface WidgetInstance {
   alias: string;
   id: string;
-  state: string;
   top: number;
   left: number;
   width: number;
@@ -50,11 +39,6 @@ export interface WidgetBounds {
 
 export interface WorkspaceEdit {
   isEdit: boolean;
-}
-
-export interface WidgetStateSave {
-  id: string;
-  state: string;
 }
 
 export type Listener<E = any> = (ipcEvent: IpcRendererEvent, event: E) => void | Promise<void>;

@@ -12,7 +12,6 @@ export default {
     {
       alias: "system",
       id: "9b9ed5a5-d673-4c85-9cd0-2b3a36656098",
-      state: "",
       top: 2,
       left: 83,
       width: 15,
@@ -21,7 +20,6 @@ export default {
     {
       alias: "clock",
       id: "49e9c5b4-900a-4cf7-8f9e-310e34a94cf1",
-      state: "",
       top: 24,
       left: 83,
       width: 15,

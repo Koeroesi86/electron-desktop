@@ -1,14 +1,7 @@
 import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
-import { WidgetBounds, WidgetInstance, WidgetScript, WidgetStateSave, WorkspaceEdit, WorkspaceState } from "@app-types";
-import {
-  TRAY_ICON_ID,
-  WIDGET_SAVE_BOUNDS_CHANNEL,
-  WIDGET_SAVE_STATE_CHANNEL,
-  WORKSPACE_EDIT_CHANNEL,
-  WORKSPACE_STATE_ACK_CHANNEL,
-  WORKSPACE_STATE_CHANNEL,
-} from "@constants";
+import { WidgetBounds, WidgetInstance, WidgetScript, WorkspaceEdit, WorkspaceState } from "@app-types";
+import { TRAY_ICON_ID, WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "@constants";
 import defaultWorkspace from "./defaultWorkspace";
 import useIpcMain from "./helpers/useIpcMain";
 // eslint-disable-next-line no-undef
@@ -31,7 +24,6 @@ const createWindow = async (props: WindowProps) => {
   try {
     const workspaceStateChannel = useIpcMain<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
     const workspaceStateAckChannel = useIpcMain(WORKSPACE_STATE_ACK_CHANNEL);
-    const widgetStateSaveChannel = useIpcMain<WidgetStateSave>(WIDGET_SAVE_STATE_CHANNEL);
     const widgetBoundsChannel = useIpcMain<WidgetBounds>(WIDGET_SAVE_BOUNDS_CHANNEL);
 
     const win = new BrowserWindow({
@@ -90,11 +82,6 @@ const createWindow = async (props: WindowProps) => {
       widgetBoundsChannel.subscribe((e, payload) => {
         // TODO: persist
         console.log(`[${Date.now()}] save-widget-bounds`, payload);
-      });
-
-      widgetStateSaveChannel.subscribe((e, payload) => {
-        // TODO: persist
-        console.log(`[${Date.now()}] save-widget-state`, payload);
       });
     });
   } catch (e) {

@@ -24,7 +24,7 @@ class SpawnPlugin {
             this.process.stdout.on("data", (data) => {
               console.log(data);
             });
-            process.on("beforeExit", () => this.process.kill(0));
+            process.on("beforeExit", () => this.process.kill("SIGTERM"));
           }
         });
       });
