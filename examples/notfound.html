@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Not found</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+      * {
+          box-sizing: border-box;
+      }
+
+      html, body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+      }
+
+      body {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
+          border: 1px solid #cccccc;
+          font-family: 'Roboto', Arial, sans-serif;
+      }
+
+      h3 {
+          display: block;
+      }
+  </style>
+</head>
+<body>
+  <h3>Alias not found:&nbsp;"<span class="alias"></span>"</h3>
+  <script type="application/javascript">
+    document.querySelector('.alias').innerText = new URL(location.href).searchParams.get('alias') || 'unknown';
+  </script>
+</body>
+</html>

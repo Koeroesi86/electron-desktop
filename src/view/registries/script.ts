@@ -1,4 +1,5 @@
 import { WidgetScript } from "@app-types";
+import path from "path";
 
 ((): void => {
   const scripts: { [k: string]: WidgetScript } = {};
@@ -9,6 +10,7 @@ import { WidgetScript } from "@app-types";
         scripts[script.alias] = script;
       }
     },
-    get: (alias: string) => scripts[alias] || { alias, uri: "" }, // not found?
+    get: (alias: string) =>
+      scripts[alias] || { alias, uri: `file://${path.resolve(process.cwd(), "./examples/notfound.html").replace(/\\/g, "/")}?alias=${alias}` },
   };
 })();
