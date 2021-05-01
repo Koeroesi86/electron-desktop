@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import { Listener, WidgetBounds, WorkspaceEdit } from "@app-types";
-import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL } from "@constants";
+import { WORKSPACE_EDIT_CHANNEL } from "@constants";
 import useValue from "@hooks/useValue";
 import useChannel from "@hooks/useChannel";
 import AbsoluteWrapper from "../absolute-wrapper";
@@ -12,42 +13,39 @@ export interface WidgetControlsProps {
   width: number;
   height: number;
   id: string;
+  onChange: (bounds: WidgetBounds) => void | Promise<void>;
   children?: React.ReactNode;
 }
 
-const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, height, children }) => {
+const Wrapper = styled(AbsoluteWrapper)`
+  &[draggable="true"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+`;
+
+const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, height, children, onChange }) => {
   const workspaceEditChannel = useChannel<WorkspaceEdit>(WORKSPACE_EDIT_CHANNEL);
-  const widgetBoundsChannel = useChannel<WidgetBounds>(WIDGET_SAVE_BOUNDS_CHANNEL);
   const [bounds, setBounds] = useState<WidgetBounds>({ id, top, left, width, height });
   const [dragOffset, setDragOffset] = useValue<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [hasMounted, setHasMounted] = useValue<boolean>(false);
   const [editing, setEditing] = useState(false);
-
-  useEffect(() => {
-    if (hasMounted) {
-      widgetBoundsChannel.dispatch({
-        id,
-        top: bounds.top,
-        left: bounds.left,
-        width: bounds.width,
-        height: bounds.height,
-      });
-    }
-  }, [bounds]);
 
   useEffect(() => {
     const workspaceEditListener: Listener<WorkspaceEdit> = (_, { isEdit }) => setEditing(isEdit);
 
     workspaceEditChannel.subscribe(workspaceEditListener);
-    setHasMounted(true);
     return () => {
-      setHasMounted(false);
       workspaceEditChannel.unsubscribe(workspaceEditListener);
     };
   }, []);
 
   return (
-    <AbsoluteWrapper
+    <Wrapper
       top={bounds.top}
       left={bounds.left}
       width={bounds.width}
@@ -73,10 +71,11 @@ const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, h
         // @ts-ignore
         const relYDiff = ((clientY - dragOffset.y) / target.parentNode.clientHeight) * 100;
         setBounds({ ...bounds, left: relXDiff, top: relYDiff });
+        onChange({ ...bounds, left: relXDiff, top: relYDiff });
       }}
     >
       {children}
-    </AbsoluteWrapper>
+    </Wrapper>
   );
 };
 
@@ -86,11 +85,13 @@ WidgetControls.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   id: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
   children: PropTypes.node,
 };
 
 WidgetControls.defaultProps = {
   children: null,
+  onChange: () => {},
 };
 
 export default WidgetControls;

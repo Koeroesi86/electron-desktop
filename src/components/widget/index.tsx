@@ -6,6 +6,7 @@ import AbsoluteWrapper from "../absolute-wrapper";
 export interface WidgetProps {
   alias: string;
   id: string;
+  devtools?: boolean;
 }
 
 const getWebpreferences = (uri: string) =>
@@ -23,16 +24,16 @@ const Wrapper = styled(AbsoluteWrapper)`
   }
 `;
 
-const Widget: React.FC<WidgetProps> = ({ alias, id }) => {
+const Widget: React.FC<WidgetProps> = ({ alias, id, devtools }) => {
   const script = useMemo(() => window.scriptRegistry.get(alias), [alias]);
   const element = useRef();
 
   useEffect(() => {
-    if (element && element.current) {
+    if (element && element.current && devtools) {
       // @ts-ignore
       setTimeout(() => element.current.openDevTools(), 500);
     }
-  }, [script]);
+  }, [script, devtools]);
 
   return (
     <Wrapper top={0} left={0} width={100} height={100}>
@@ -44,6 +45,11 @@ const Widget: React.FC<WidgetProps> = ({ alias, id }) => {
 Widget.propTypes = {
   alias: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
+  devtools: PropTypes.bool,
+};
+
+Widget.defaultProps = {
+  devtools: false,
 };
 
 export default Widget;
