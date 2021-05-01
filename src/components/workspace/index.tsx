@@ -1,37 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Listener, RevivableComponent, WidgetInstance, WorkspaceState, WorkspaceStateSave } from "@app-types";
+import React from "react";
+import { RevivableComponent } from "@app-types";
 import { ReviverLayout } from "@koeroesi86/react-reviver";
-import { WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "@constants";
-import useChannel from "@hooks/useChannel";
+import useWorkspace from "@hooks/useWorkspace";
 import FixedWrapper from "../fixed-wrapper";
-
-const wait = (delay: number = 1) => new Promise<void>((r) => setTimeout(r, delay));
 
 export interface WorkspaceProps {}
 
 const Workspace: React.FC<WorkspaceProps> = () => {
-  const [instances, setInstances] = useState<WidgetInstance[]>([]);
-  const workspaceStateChannel = useChannel<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
-  const workspaceStateAckChannel = useChannel(WORKSPACE_STATE_ACK_CHANNEL);
-  const saveWidgetBoundsChannel = useChannel<WorkspaceStateSave>(WIDGET_SAVE_BOUNDS_CHANNEL);
-
-  useEffect(() => {
-    const workspaceStateListener: Listener<WorkspaceState> = async (_, worspaceState) => {
-      const { widgetInstances, widgetScripts } = worspaceState;
-
-      await wait();
-
-      workspaceStateAckChannel.dispatch("");
-
-      await Promise.all(widgetScripts.map((src) => window.scriptRegistry.add(src)));
-      setInstances(widgetInstances);
-    };
-
-    workspaceStateChannel.subscribe(workspaceStateListener);
-    return () => {
-      workspaceStateChannel.unsubscribe(workspaceStateListener);
-    };
-  }, []);
+  const [instances, setInstances] = useWorkspace();
 
   return (
     <FixedWrapper top={0} left={0} width={100} height={100}>
@@ -52,8 +28,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
                   ...currentInstances[index],
                   ...bounds,
                 };
-                saveWidgetBoundsChannel.dispatch({ instances: currentInstances });
-                console.log(bounds);
+                setInstances(currentInstances);
               },
             },
             children: [{ type: "widget", props: { alias: instance.alias, id: instance.id, devtools: false } }],
