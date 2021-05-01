@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clock</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+      * {
+          box-sizing: border-box;
+      }
+
+      html, body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+      }
+
+      .clock-widget {
+          width: 100%;
+          height: 100%;
+          font-family: 'Roboto', Arial, sans-serif;
+          display: flex;
+          flex-direction: row;
+      }
+
+      .clock-widget .text {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          justify-content: center;
+          padding-right: 20px;
+          background: #25bfb5;
+          color: #fff;
+          border-right: 2px solid #efefef;
+          font-weight: 200;
+      }
+
+      .clock-widget .text .hour {
+          font-size: 5rem;
+      }
+
+      .clock-widget .text .minute {
+          font-size: 2rem;
+      }
+
+      .clock-widget .progress {
+          width: 35%;
+          position: relative;
+          background: #ffffff;
+          overflow: hidden;
+      }
+
+      .clock-widget .progress .indicator {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform-origin: left center;
+          transform: translateY(-50%);
+      }
+
+      .clock-widget .progress .indicator svg {
+          transform-origin: left center;
+      }
+
+      .clock-widget .progress .indicator svg path {
+          stroke: #ccc;
+          fill: none;
+          stroke-width: 5%;
+      }
+
+      .clock-widget .progress .indicator.seconds svg path {
+          stroke: #25bfb5;
+      }
+  </style>
+</head>
+<body>
+<div class="clock-widget">
+  <div class="text">
+    <div class="hour"></div>
+    <div class="minute"></div>
+  </div>
+  <div class="progress">
+    <div class="indicator background">
+      <svg viewBox="0 0 200 200">
+        <path></path>
+      </svg>
+    </div>
+    <div class="indicator seconds">
+      <svg viewBox="0 0 200 200">
+        <path></path>
+      </svg>
+    </div>
+  </div>
+</div>
+<script type="application/javascript">
+  (() => {
+    const intervals = [];
+
+    const load = () => {
+      (async () => {
+        const clockNode = document.querySelector(".clock-widget");
+        const hourNode = clockNode.querySelector(".hour");
+        const minuteNode = clockNode.querySelector(".minute");
+        const progressNode = clockNode.querySelector(".progress");
+        const backgroundNode = clockNode.querySelector(".progress .indicator.background svg");
+        const newIndicatorSvg = clockNode.querySelector(".progress .indicator.seconds svg");
+        const newIndicatorNode = clockNode.querySelector(".progress .indicator.seconds svg path");
+
+        function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+          const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+
+          return {
+            x: centerX + radius * Math.cos(angleInRadians),
+            y: centerY + radius * Math.sin(angleInRadians)
+          };
+        }
+
+        function describeArc(x, y, radius, startAngle, endAngle) {
+          const start = polarToCartesian(x, y, radius, endAngle);
+          const end = polarToCartesian(x, y, radius, startAngle);
+
+          const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+          return [ "M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y ].join(" ");
+        }
+
+        backgroundNode.querySelector("path").setAttribute("d", describeArc(0, 100, 90, 0, 180));
+
+        function fixSizes() {
+          if (backgroundNode.style.width !== progressNode.clientWidth) {
+            backgroundNode.style.width = progressNode.clientWidth;
+            backgroundNode.style.height = progressNode.clientWidth;
+          }
+          if (newIndicatorSvg.style.width !== progressNode.clientWidth) {
+            newIndicatorSvg.style.width = progressNode.clientWidth;
+            newIndicatorSvg.style.height = progressNode.clientWidth;
+          }
+        }
+
+        function formatNumber(n) {
+          return n < 10 ? `0${n}` : n;
+        }
+
+        function setTime(node, value) {
+          const parsed = formatNumber(value);
+          if (node.innerHTML !== parsed) {
+            // eslint-disable-next-line no-param-reassign
+            node.innerHTML = parsed;
+          }
+        }
+
+        function refresh() {
+          const date = new Date();
+
+          setTime(hourNode, date.getHours());
+          setTime(minuteNode, date.getMinutes());
+          fixSizes();
+          newIndicatorNode.setAttribute("d", describeArc(0, 100, 90, 0, (date.getSeconds() / 60) * 180));
+        }
+
+        refresh();
+        intervals.push(setInterval(refresh, 500));
+      })();
+    };
+
+    window.addEventListener('load', load);
+    window.addEventListener('beforeunload', () => {
+      intervals.forEach((interval, index) => {
+        clearInterval(interval);
+        intervals.splice(index, 1);
+      });
+    });
+  })();
+</script>
+</body>
+</html>

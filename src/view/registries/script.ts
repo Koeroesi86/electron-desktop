@@ -1,30 +1,14 @@
+import { WidgetScript } from "@app-types";
+
 ((): void => {
-  const scripts: { [k: string]: boolean } = {};
-
-  const loadScript = async (src: string, node: HTMLElement = document.body) => {
-    const script = document.createElement("script");
-    // widget.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms';
-    script.src = src;
-    await new Promise<void>((resolve, reject) => {
-      script.addEventListener("load", () => {
-        node.removeChild(script);
-        resolve();
-      });
-
-      script.addEventListener("error", () => {
-        node.removeChild(script);
-        reject();
-      });
-
-      node.appendChild(script);
-    });
-  };
+  const scripts: { [k: string]: WidgetScript } = {};
 
   window.scriptRegistry = {
-    add: async (src) => {
-      if (!scripts[src]) {
-        await loadScript(src);
+    add: async (script) => {
+      if (!scripts[script.alias]) {
+        scripts[script.alias] = script;
       }
     },
+    get: (alias: string) => scripts[alias] || { alias, uri: "" }, // not found?
   };
 })();

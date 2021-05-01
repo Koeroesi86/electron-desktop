@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import "./registries/script";
 import "./registries/widget";
-import { LoadWidget, LoadWidgetPayload, UnloadWidget } from "@app-types";
+import { LoadWidget, LoadWidgetPayload, UnloadWidget, WidgetScript } from "@app-types";
 import App from "../components/app";
 
 declare global {
@@ -15,7 +15,8 @@ declare global {
   }
 
   interface ScriptRegistry {
-    add: (src: string) => Promise<void>;
+    add: (script: WidgetScript) => Promise<void>;
+    get: (alias) => WidgetScript;
   }
 
   interface Window {

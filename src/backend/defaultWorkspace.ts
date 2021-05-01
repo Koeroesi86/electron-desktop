@@ -1,8 +1,13 @@
 import path from "path";
 import { WidgetInstance } from "../types";
 
+const toLocalUri = (local: string) => `file://${path.resolve(process.cwd(), local).replace(/\\/g, "/")}`;
+
 export default {
-  widgetScripts: [path.resolve(process.cwd(), "examples/clock.js"), path.resolve(process.cwd(), "examples/system.js")],
+  widgetScripts: [
+    { alias: "clock", uri: toLocalUri("examples/clock.html") },
+    { alias: "system", uri: toLocalUri("examples/system.html") },
+  ],
   widgetInstances: [
     {
       alias: "system",

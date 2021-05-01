@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
-import { WidgetBounds, WidgetInstance, WidgetStateSave, WorkspaceEdit, WorkspaceState } from "@app-types";
+import { WidgetBounds, WidgetInstance, WidgetScript, WidgetStateSave, WorkspaceEdit, WorkspaceState } from "@app-types";
 import {
   TRAY_ICON_ID,
   WIDGET_SAVE_BOUNDS_CHANNEL,
@@ -19,7 +19,7 @@ let contextMenu: Menu;
 let tray: Tray; // store out of scope to avoid garbage collection
 
 interface WindowProps {
-  widgetScripts: string[];
+  widgetScripts: WidgetScript[];
   widgetInstances: WidgetInstance[];
   x: number;
   y: number;
@@ -49,11 +49,13 @@ const createWindow = async (props: WindowProps) => {
       width: props.width,
       height: props.height,
       webPreferences: {
+        nodeIntegrationInSubFrames: true,
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
         worldSafeExecuteJavaScript: true,
         contextIsolation: false,
         devTools: true,
+        webviewTag: true,
       },
     });
 

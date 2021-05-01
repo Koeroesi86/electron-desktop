@@ -59,7 +59,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
               height: instance.height,
               id: instance.id,
             },
-            children: [{ type: "widget", props: { alias: instance.alias, initialState: instance.state, id: instance.id } }],
+            children: [{ type: "widget", props: { alias: instance.alias, id: instance.id } }],
           })
         )}
       />

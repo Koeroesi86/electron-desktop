@@ -16,6 +16,11 @@ export type UnloadWidget = (element: ShadowRoot) => void;
 
 export type LoadWidget = (payload: LoadWidgetPayload) => void;
 
+export interface WidgetScript {
+  alias: string;
+  uri: string;
+}
+
 export interface WidgetInstance {
   alias: string;
   id: string;
@@ -27,7 +32,7 @@ export interface WidgetInstance {
 }
 
 export interface WorkspaceState {
-  widgetScripts: string[];
+  widgetScripts: WidgetScript[];
   widgetInstances: WidgetInstance[];
 }
 
