@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import AbsoluteWrapper from "../absolute-wrapper";
 
 export interface WidgetProps {
-  alias: string;
-  id: string;
+  partition: string;
+  uri: string;
   devtools?: boolean;
 }
 
@@ -13,8 +13,6 @@ const getWebpreferences = (uri: string) =>
   /^file:\/\/.+/.test(uri)
     ? "webviewTag, nodeIntegration, nodeIntegrationInSubFrames, nodeIntegrationInWorker, contextIsolation=false"
     : "contextIsolation, nodeIntegration=false, nodeIntegrationInSubFrames=false, webviewTag=false";
-
-const getPartition = (id: string) => `persist:widget-${id}}`;
 
 const Wrapper = styled(AbsoluteWrapper)`
   & webview {
@@ -24,8 +22,7 @@ const Wrapper = styled(AbsoluteWrapper)`
   }
 `;
 
-const Widget: React.FC<WidgetProps> = ({ alias, id, devtools }) => {
-  const script = useMemo(() => window.scriptRegistry.get(alias), [alias]);
+const Widget: React.FC<WidgetProps> = ({ devtools, partition, uri }) => {
   const element = useRef();
 
   useEffect(() => {
@@ -33,18 +30,18 @@ const Widget: React.FC<WidgetProps> = ({ alias, id, devtools }) => {
       // @ts-ignore
       setTimeout(() => element.current.openDevTools(), 500);
     }
-  }, [script, devtools]);
+  }, [devtools]);
 
   return (
     <Wrapper top={0} left={0} width={100} height={100}>
-      {script && <webview src={script.uri} ref={element} partition={getPartition(id)} webpreferences={getWebpreferences(script.uri)} />}
+      <webview src={uri} ref={element} partition={partition} webpreferences={getWebpreferences(uri)} />
     </Wrapper>
   );
 };
 
 Widget.propTypes = {
-  alias: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  partition: PropTypes.string.isRequired,
+  uri: PropTypes.string.isRequired,
   devtools: PropTypes.bool,
 };
 

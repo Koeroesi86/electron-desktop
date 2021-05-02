@@ -1,48 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Listener, WidgetBounds, WorkspaceEdit } from "@app-types";
-import { WORKSPACE_EDIT_CHANNEL } from "@constants";
 import useValue from "@hooks/useValue";
-import useChannel from "@hooks/useChannel";
+import useIsEditing from "@hooks/useIsEditing";
 import AbsoluteWrapper from "../absolute-wrapper";
+
+export interface Bounds {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
 
 export interface WidgetControlsProps {
   top: number;
   left: number;
   width: number;
   height: number;
-  id: string;
-  onChange: (bounds: WidgetBounds) => void | Promise<void>;
+  onChange: (bounds: Bounds) => void | Promise<void>;
+  onContextMenu: (x: number, y: number) => void | Promise<void>;
   children?: React.ReactNode;
 }
 
 const Wrapper = styled(AbsoluteWrapper)`
-  &[draggable="true"]::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
+  &[draggable="true"] {
+    webview {
+      pointer-events: none;
+    }
   }
 `;
 
-const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, height, children, onChange }) => {
-  const workspaceEditChannel = useChannel<WorkspaceEdit>(WORKSPACE_EDIT_CHANNEL);
-  const [bounds, setBounds] = useState<WidgetBounds>({ id, top, left, width, height });
+const WidgetControls: React.FC<WidgetControlsProps> = ({ top, left, width, height, children, onChange, onContextMenu }) => {
+  const [bounds, setBounds] = useState<Bounds>({ top, left, width, height });
   const [dragOffset, setDragOffset] = useValue<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [editing, setEditing] = useState(false);
-
-  useEffect(() => {
-    const workspaceEditListener: Listener<WorkspaceEdit> = (_, { isEdit }) => setEditing(isEdit);
-
-    workspaceEditChannel.subscribe(workspaceEditListener);
-    return () => {
-      workspaceEditChannel.unsubscribe(workspaceEditListener);
-    };
-  }, []);
+  const [editing] = useIsEditing();
 
   return (
     <Wrapper
@@ -51,10 +42,8 @@ const WidgetControls: React.FC<WidgetControlsProps> = ({ id, top, left, width, h
       width={bounds.width}
       height={bounds.height}
       draggable={editing}
-      onMouseUp={(e) => {
-        if (e.button === 2) {
-          console.log("right click");
-        }
+      onContextMenu={(e) => {
+        onContextMenu(e.pageX, e.pageY);
       }}
       onDragStart={(e) => {
         setDragOffset({
@@ -84,14 +73,15 @@ WidgetControls.propTypes = {
   left: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  id: PropTypes.string.isRequired,
   onChange: PropTypes.func,
+  onContextMenu: PropTypes.func,
   children: PropTypes.node,
 };
 
 WidgetControls.defaultProps = {
   children: null,
   onChange: () => {},
+  onContextMenu: () => {},
 };
 
 export default WidgetControls;
