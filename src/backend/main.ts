@@ -1,9 +1,10 @@
 import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
-import { WidgetBounds, WidgetInstance, WidgetScript, WorkspaceEdit, WorkspaceState } from "@app-types";
+import { WidgetInstance, WorkspaceEdit, WorkspaceState } from "@app-types";
 import { TRAY_ICON_ID, WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "@constants";
-import defaultWorkspace from "./defaultWorkspace";
 import useIpcMain from "./helpers/useIpcMain";
+import workspaceStorage from "./helpers/workspaceStorage";
+import displayStorage from "./helpers/displayStorage";
 // eslint-disable-next-line no-undef
 import Timeout = NodeJS.Timeout;
 
@@ -12,8 +13,7 @@ let contextMenu: Menu;
 let tray: Tray; // store out of scope to avoid garbage collection
 
 interface WindowProps {
-  widgetScripts: { [k: string]: WidgetScript };
-  widgetInstances: WidgetInstance[];
+  workspaceId: string;
   x: number;
   y: number;
   width: number;
@@ -24,7 +24,7 @@ const createWindow = async (props: WindowProps) => {
   try {
     const workspaceStateChannel = useIpcMain<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
     const workspaceStateAckChannel = useIpcMain(WORKSPACE_STATE_ACK_CHANNEL);
-    const widgetBoundsChannel = useIpcMain<WidgetBounds>(WIDGET_SAVE_BOUNDS_CHANNEL);
+    const widgetBoundsChannel = useIpcMain<{ instances: WidgetInstance[] }>(WIDGET_SAVE_BOUNDS_CHANNEL);
 
     const win = new BrowserWindow({
       transparent: true,
@@ -50,14 +50,16 @@ const createWindow = async (props: WindowProps) => {
         webviewTag: true,
       },
     });
+    const state = await workspaceStorage.get(props.workspaceId);
 
     await win.loadFile(path.resolve(__dirname, "../frontend/main.html"));
 
+    workspaceStorage.subscribe(props.workspaceId, (s) => {
+      workspaceStateChannel.dispatch(win.webContents, s);
+    });
+
     const sendState = () => {
-      workspaceStateChannel.dispatch(win.webContents, {
-        widgetScripts: props.widgetScripts,
-        widgetInstances: props.widgetInstances,
-      });
+      workspaceStateChannel.dispatch(win.webContents, state);
     };
 
     win.once("ready-to-show", async () => {
@@ -79,9 +81,12 @@ const createWindow = async (props: WindowProps) => {
         }
       });
 
-      widgetBoundsChannel.subscribe((e, payload) => {
-        // TODO: persist
-        console.log(`[${Date.now()}] save-widget-bounds`, payload);
+      widgetBoundsChannel.subscribe(async (e, payload) => {
+        const prevState = await workspaceStorage.get(props.workspaceId);
+        await workspaceStorage.update(props.workspaceId, {
+          ...prevState,
+          widgetInstances: payload.instances,
+        });
       });
     });
   } catch (e) {
@@ -149,17 +154,17 @@ const createTray = async (): Promise<void> => {
 const restoreWindows = async (): Promise<void> => {
   const displays = screen.getAllDisplays();
   await Promise.all(
-    displays.map((display) =>
-      createWindow({
-        widgetScripts: defaultWorkspace.widgetScripts,
-        widgetInstances: defaultWorkspace.widgetInstances,
+    displays.map(async (display) => {
+      const workspaceId = await displayStorage.getWorkspace(`${display.id}`);
+      await createWindow({
+        workspaceId,
         // added -1 to solve black window issue
         x: display.workArea.x - 1,
         y: display.workArea.y - 1,
         width: display.workArea.width,
         height: display.workArea.height,
-      })
-    )
+      });
+    })
   );
 
   BrowserWindow.getAllWindows().forEach((w) => w.webContents.reload());

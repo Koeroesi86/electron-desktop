@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import useValue from "@hooks/useValue";
@@ -31,15 +31,14 @@ const Wrapper = styled(AbsoluteWrapper)`
 `;
 
 const WidgetControls: React.FC<WidgetControlsProps> = ({ top, left, width, height, children, editing, onChange, onContextMenu }) => {
-  const [bounds, setBounds] = useState<Bounds>({ top, left, width, height });
   const [dragOffset, setDragOffset] = useValue<{ x: number; y: number }>({ x: 0, y: 0 });
 
   return (
     <Wrapper
-      top={bounds.top}
-      left={bounds.left}
-      width={bounds.width}
-      height={bounds.height}
+      top={top}
+      left={left}
+      width={width}
+      height={height}
       draggable={editing}
       onContextMenu={(e) => {
         onContextMenu((e.pageX / window.innerWidth) * 100, (e.pageY / window.innerHeight) * 100);
@@ -58,8 +57,7 @@ const WidgetControls: React.FC<WidgetControlsProps> = ({ top, left, width, heigh
         const relXDiff = ((clientX - dragOffset.x) / target.parentNode.clientWidth) * 100;
         // @ts-ignore
         const relYDiff = ((clientY - dragOffset.y) / target.parentNode.clientHeight) * 100;
-        setBounds({ ...bounds, left: relXDiff, top: relYDiff });
-        onChange({ ...bounds, left: relXDiff, top: relYDiff });
+        onChange({ width, height, left: relXDiff, top: relYDiff });
       }}
     >
       {children}
