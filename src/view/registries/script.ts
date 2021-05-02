@@ -5,12 +5,12 @@ import path from "path";
   const scripts: { [k: string]: WidgetScript } = {};
 
   window.scriptRegistry = {
-    add: async (script) => {
-      if (!scripts[script.alias]) {
-        scripts[script.alias] = script;
+    add: async (alias, script) => {
+      if (!scripts[alias]) {
+        scripts[alias] = script;
       }
     },
     get: (alias: string) =>
-      scripts[alias] || { alias, uri: `file://${path.resolve(process.cwd(), "./examples/notfound.html").replace(/\\/g, "/")}?alias=${alias}` },
+      scripts[alias] || { name: alias, uri: `file://${path.resolve(process.cwd(), "./examples/notfound.html").replace(/\\/g, "/")}?alias=${alias}` },
   };
 })();

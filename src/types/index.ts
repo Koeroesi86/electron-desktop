@@ -8,7 +8,7 @@ import { WidgetProps } from "../components/widget";
 import { WorkspaceProps } from "../components/workspace";
 
 export interface WidgetScript {
-  alias: string;
+  name: string;
   uri: string;
 }
 
@@ -22,7 +22,7 @@ export interface WidgetInstance {
 }
 
 export interface WorkspaceState {
-  widgetScripts: WidgetScript[];
+  widgetScripts: { [k: string]: WidgetScript };
   widgetInstances: WidgetInstance[];
 }
 

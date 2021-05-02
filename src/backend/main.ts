@@ -12,7 +12,7 @@ let contextMenu: Menu;
 let tray: Tray; // store out of scope to avoid garbage collection
 
 interface WindowProps {
-  widgetScripts: WidgetScript[];
+  widgetScripts: { [k: string]: WidgetScript };
   widgetInstances: WidgetInstance[];
   x: number;
   y: number;

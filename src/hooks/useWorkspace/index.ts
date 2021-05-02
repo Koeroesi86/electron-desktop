@@ -24,7 +24,7 @@ const useWorkspace = (): [WidgetInstance[], SaveWorkspace] => {
 
       workspaceStateAckChannel.dispatch("");
 
-      await Promise.all(widgetScripts.map((src) => window.scriptRegistry.add(src)));
+      await Promise.all(Object.keys(widgetScripts).map((key) => window.scriptRegistry.add(key, widgetScripts[key])));
       setInstances(widgetInstances);
     };
 

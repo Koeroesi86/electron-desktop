@@ -6,8 +6,8 @@ import App from "../components/app";
 
 declare global {
   interface ScriptRegistry {
-    add: (script: WidgetScript) => Promise<void>;
-    get: (alias) => WidgetScript;
+    add: (alias: string, script: WidgetScript) => Promise<void>;
+    get: (alias: string) => WidgetScript;
   }
 
   interface Window {
