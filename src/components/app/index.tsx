@@ -1,7 +1,8 @@
 import React from "react";
 import { ComponentRegistry, ReviverProvider } from "@koeroesi86/react-reviver";
-import ApiClientProvider, { AdapterVersion } from "@components/api-client";
-import WidgetContextMenu from "@components/widget-context-menu";
+import ApiClientProvider, { AdapterVersion } from "../api-client";
+import WidgetContextMenu from "../widget-context-menu";
+import { ScriptProvider } from "../ScriptRegistry";
 import GlobalStyle from "../global-style";
 import Workspace from "../workspace";
 import WidgetControls from "../widget-controls";
@@ -21,8 +22,10 @@ const components: ComponentRegistry = {
 const App: React.FC = () => (
   <ReviverProvider components={components}>
     <ApiClientProvider adapter={AdapterVersion.ipc}>
-      <GlobalStyle />
-      <Workspace />
+      <ScriptProvider>
+        <GlobalStyle />
+        <Workspace />
+      </ScriptProvider>
     </ApiClientProvider>
   </ReviverProvider>
 );

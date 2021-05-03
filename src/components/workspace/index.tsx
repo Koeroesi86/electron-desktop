@@ -5,10 +5,12 @@ import WidgetContextMenu from "@components/widget-context-menu";
 import FixedWrapper from "@components/fixed-wrapper";
 import WidgetControls from "@components/widget-controls";
 import Widget from "@components/widget";
+import { useScriptRegistry } from "@components/ScriptRegistry";
 
 export interface WorkspaceProps {}
 
 const Workspace: React.FC<WorkspaceProps> = () => {
+  const scriptRegistry = useScriptRegistry();
   const [instances, setInstances] = useWorkspace();
   const [editing] = useIsEditing();
   const [widgetContextMenu, setWidgetContextmenu] = useState({ show: false, x: 0, y: 0, id: "" });
@@ -35,11 +37,15 @@ const Workspace: React.FC<WorkspaceProps> = () => {
             setWidgetContextmenu({ show: true, x, y, id: instance.id });
           }}
         >
-          <Widget partition={`persist:widget-${instance.id}}`} uri={window.scriptRegistry.get(instance.alias).uri} />
+          <Widget partition={`persist:widget-${instance.id}}`} uri={scriptRegistry.get(instance.alias).uri} />
         </WidgetControls>
       ))}
       {widgetContextMenu.show && (
-        <WidgetContextMenu x={widgetContextMenu.x} y={widgetContextMenu.y} onBlur={() => setWidgetContextmenu({ ...widgetContextMenu, show: false })} />
+        <WidgetContextMenu
+          x={widgetContextMenu.x}
+          y={widgetContextMenu.y}
+          onBlur={() => setWidgetContextmenu({ ...widgetContextMenu, show: false })}
+        />
       )}
     </FixedWrapper>
   );
