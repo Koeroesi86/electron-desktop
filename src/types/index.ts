@@ -26,6 +26,10 @@ export interface WorkspaceState {
   widgetInstances: WidgetInstance[];
 }
 
+export interface Display {
+  workspaceId: string;
+}
+
 export interface WorkspaceStateSave {
   instances: WidgetInstance[];
 }

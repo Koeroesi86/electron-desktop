@@ -1,20 +1,58 @@
 import { WorkspaceState } from "@app-types";
 import defaultWorkspace from "../defaultWorkspace";
+import configStorage from "./configStorage";
 
 type Listener = (state: WorkspaceState) => void | Promise<void>;
 const listeners: { [id: string]: Listener[] } = {};
 
-const inmemory = { "25f9c603-a4e3-5267-b280-927cede84ed4": { ...defaultWorkspace } };
+const CONFIG_FILE = "workspaces.json";
+
+interface WorkspaceRegistry {
+  [id: string]: WorkspaceState;
+}
+
+const saveConfig = async (registry: WorkspaceRegistry): Promise<void> => {
+  await configStorage.set(CONFIG_FILE, registry);
+};
+
+const ensureConfig = async () => {
+  if (!(await configStorage.exists(CONFIG_FILE))) {
+    await saveConfig({});
+  }
+};
+
+const getConfig = async (): Promise<WorkspaceRegistry> => {
+  await ensureConfig();
+  return configStorage.get<WorkspaceRegistry>(CONFIG_FILE);
+};
+
+const getWorkspace = async (workspaceId: string): Promise<WorkspaceState> => {
+  const store = await getConfig();
+
+  if (!store[workspaceId]) {
+    store[workspaceId] = {
+      ...defaultWorkspace,
+    };
+
+    await configStorage.set(CONFIG_FILE, store);
+  }
+
+  return store[workspaceId];
+};
 
 const workspaceStorage = {
   update: async (id: string, state: WorkspaceState): Promise<void> => {
-    inmemory[id] = JSON.parse(JSON.stringify(state));
+    const store = await getConfig();
+
+    store[id] = state;
+
+    await saveConfig(store);
 
     if (listeners[id]) {
-      listeners[id].forEach((listener) => listener(inmemory[id]));
+      listeners[id].forEach((listener) => listener(store[id]));
     }
   },
-  get: async (id: string): Promise<WorkspaceState> => inmemory[id] || inmemory["25f9c603-a4e3-5267-b280-927cede84ed4"],
+  get: async (id: string): Promise<WorkspaceState> => getWorkspace(id),
   subscribe: (id: string, listener: Listener): void => {
     if (!listeners[id]) {
       listeners[id] = [];
