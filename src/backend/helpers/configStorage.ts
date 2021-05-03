@@ -9,15 +9,15 @@ const resolvePath = (fileName: string) => path.resolve(root, fileName);
 
 const throttledStore: { [p: string]: string } = {};
 
-const write = (fileName: string, data: any): void => {
-  fs.writeFileSync(resolvePath(fileName), JSON.stringify(data, null, 2), "utf8");
+const write = (fileName: string, data: string): void => {
+  fs.writeFileSync(resolvePath(fileName), data, "utf8");
 };
 
 const read = (fileName: string): string => fs.readFileSync(resolvePath(fileName), "utf8");
 
 const exists = (fileName: string): boolean => fs.existsSync(resolvePath(fileName));
 
-const throttledWrite = throttle<(f: string, d: any) => void>(write, 5000);
+const throttledWrite = throttle<(f: string, d: string) => void>(write, 5000);
 
 process.on("beforeExit", () => {
   throttledWrite.cancel();
@@ -26,8 +26,12 @@ process.on("beforeExit", () => {
 
 const configStorage = {
   set: async (fileName: string, data: any): Promise<void> => {
-    throttledStore[fileName] = JSON.stringify(data);
-    throttledWrite(fileName, data);
+    const target = JSON.stringify(data, null, 2);
+
+    if (throttledStore[fileName] !== target) {
+      throttledStore[fileName] = target;
+      throttledWrite(fileName, target);
+    }
   },
   exists: async (fileName: string): Promise<boolean> => {
     if (throttledStore[fileName]) {
