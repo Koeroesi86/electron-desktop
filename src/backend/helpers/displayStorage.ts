@@ -1,11 +1,10 @@
+import { v5 } from "uuid";
 import { Display } from "@app-types";
+import { NAMESPACE } from "@constants";
+import defaultDisplay from "../defaults/display";
 import configStorage from "./configStorage";
 
 const CONFIG_FILE = "displays.json";
-
-const defaultDisplay: Display = {
-  workspaceId: "25f9c603-a4e3-5267-b280-927cede84ed4",
-};
 
 interface DisplayRegistry {
   [id: string]: Display;
@@ -32,6 +31,7 @@ const getDisplay = async (displayId: string): Promise<Display> => {
   if (!store[displayId]) {
     store[displayId] = {
       ...defaultDisplay,
+      workspaceId: v5(`${displayId}-${defaultDisplay.workspaceId}`, NAMESPACE),
     };
 
     await configStorage.set(CONFIG_FILE, store);
@@ -50,7 +50,6 @@ const displayStorage = {
     const store = await getConfig();
 
     store[displayId] = {
-      ...defaultDisplay,
       ...(await getDisplay(displayId)),
       workspaceId,
     };

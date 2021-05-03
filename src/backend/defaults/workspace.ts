@@ -1,5 +1,5 @@
 import path from "path";
-import { WorkspaceState } from "../types";
+import { WorkspaceState } from "@app-types";
 
 const toLocalUri = (local: string) => `file://${path.resolve(process.cwd(), local).replace(/\\/g, "/")}`;
 

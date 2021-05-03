@@ -1,5 +1,5 @@
 import { WorkspaceState } from "@app-types";
-import defaultWorkspace from "../defaultWorkspace";
+import defaultWorkspace from "../defaults/workspace";
 import configStorage from "./configStorage";
 
 type Listener = (state: WorkspaceState) => void | Promise<void>;
