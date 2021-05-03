@@ -1,7 +1,13 @@
 import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
 import { WidgetInstance, WorkspaceEdit, WorkspaceState } from "@app-types";
-import { TRAY_ICON_ID, WIDGET_SAVE_BOUNDS_CHANNEL, WORKSPACE_EDIT_CHANNEL, WORKSPACE_STATE_ACK_CHANNEL, WORKSPACE_STATE_CHANNEL } from "@constants";
+import {
+  TRAY_ICON_ID,
+  WIDGET_SAVE_BOUNDS_CHANNEL,
+  WORKSPACE_EDIT_CHANNEL,
+  WORKSPACE_STATE_ACK_CHANNEL,
+  WORKSPACE_STATE_CHANNEL,
+} from "@constants";
 import useIpcMain from "./helpers/useIpcMain";
 import workspaceStorage from "./helpers/workspaceStorage";
 import displayStorage from "./helpers/displayStorage";
@@ -155,9 +161,9 @@ const restoreWindows = async (): Promise<void> => {
   const displays = screen.getAllDisplays();
   await Promise.all(
     displays.map(async (display) => {
-      const workspaceId = await displayStorage.getWorkspace(`${display.id}`);
+      const d = await displayStorage.getDisplay(`${display.id}`);
       await createWindow({
-        workspaceId,
+        workspaceId: d.workspaceId,
         // added -1 to solve black window issue
         x: display.workArea.x - 1,
         y: display.workArea.y - 1,

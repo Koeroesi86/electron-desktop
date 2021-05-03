@@ -40,7 +40,11 @@ const configStorage = {
 
     return exists(fileName);
   },
-  get: async <T = any>(fileName: string): Promise<T> => {
+  get: async <T = any>(fileName: string, defaultValue: T): Promise<T> => {
+    if (!(await configStorage.exists(fileName))) {
+      await configStorage.set(fileName, defaultValue);
+    }
+
     let content = throttledStore[fileName];
 
     if (!content) {
