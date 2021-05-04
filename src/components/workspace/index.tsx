@@ -5,7 +5,7 @@ import WidgetContextMenu from "@components/widget-context-menu";
 import FixedWrapper from "@components/fixed-wrapper";
 import WidgetControls from "@components/widget-controls";
 import Widget from "@components/widget";
-import { useScriptRegistry } from "@components/ScriptRegistry";
+import { useScriptRegistry } from "@components/script-registry";
 
 export interface WorkspaceProps {}
 
@@ -17,27 +17,28 @@ const Workspace: React.FC<WorkspaceProps> = () => {
 
   return (
     <FixedWrapper top={0} left={0} width={100} height={100}>
-      {instances.map((instance, index) => (
+      {Object.keys(instances).map((id) => (
         <WidgetControls
-          key={`widget-control-${instance.id}`}
-          left={instance.left}
-          width={instance.width}
-          top={instance.top}
-          height={instance.height}
+          key={`widget-control-${id}`}
+          left={instances[id].left}
+          width={instances[id].width}
+          top={instances[id].top}
+          height={instances[id].height}
           editing={editing}
           onChange={(bounds) => {
-            const currentInstances = instances.slice(0);
-            currentInstances[index] = {
-              ...currentInstances[index],
-              ...bounds,
-            };
-            setInstances(currentInstances);
+            setInstances({
+              ...instances,
+              [id]: {
+                ...instances[id],
+                ...bounds,
+              },
+            });
           }}
           onContextMenu={(x, y) => {
-            setWidgetContextmenu({ show: true, x, y, id: instance.id });
+            setWidgetContextmenu({ show: true, x, y, id });
           }}
         >
-          <Widget partition={`persist:widget-${instance.id}}`} uri={scriptRegistry.get(instance.alias).uri} />
+          <Widget partition={`persist:widget-${id}}`} uri={scriptRegistry.get(instances[id].alias).uri} />
         </WidgetControls>
       ))}
       {widgetContextMenu.show && (

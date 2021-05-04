@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
-import { WidgetInstance, WorkspaceEdit, WorkspaceState } from "@app-types";
+import { AppInstances, WidgetInstance, WorkspaceEdit, WorkspaceState } from "@app-types";
 import {
   TRAY_ICON_ID,
   WIDGET_SAVE_BOUNDS_CHANNEL,
@@ -30,7 +30,7 @@ const createWindow = async (props: WindowProps) => {
   try {
     const workspaceStateChannel = useIpcMain<WorkspaceState>(WORKSPACE_STATE_CHANNEL);
     const workspaceStateAckChannel = useIpcMain(WORKSPACE_STATE_ACK_CHANNEL);
-    const widgetBoundsChannel = useIpcMain<{ instances: WidgetInstance[] }>(WIDGET_SAVE_BOUNDS_CHANNEL);
+    const widgetBoundsChannel = useIpcMain<{ instances: AppInstances }>(WIDGET_SAVE_BOUNDS_CHANNEL);
 
     const win = new BrowserWindow({
       transparent: true,
@@ -91,7 +91,7 @@ const createWindow = async (props: WindowProps) => {
         const prevState = await workspaceStorage.get(props.workspaceId);
         await workspaceStorage.update(props.workspaceId, {
           ...prevState,
-          widgetInstances: payload.instances,
+          instances: payload.instances,
         });
       });
     });

@@ -186,13 +186,6 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@koeroesi86/react-reviver@^21.4.26-9aec7d3":
-  version "21.4.26-9aec7d3"
-  resolved "https://registry.yarnpkg.com/@koeroesi86/react-reviver/-/react-reviver-21.4.26-9aec7d3.tgz#3308509eb5f4a463da78857456a90319ee8879b2"
-  integrity sha512-xOL30YSxLaklv1ZGjkP30E9vQVipDNWUCHPmIqAfngjNRRl6bNsViK5qME00ubFdPrmU4DeyMb59zuu2Nq2tKw==
-  dependencies:
-    react "^17.0.2"
-
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.4.tgz#d4b3549a5db5de2683e0c1071ab4f140904bbf69"

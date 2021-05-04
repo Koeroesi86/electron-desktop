@@ -1,11 +1,4 @@
 import { IpcRendererEvent } from "electron";
-import { RevivableComponentType } from "@koeroesi86/react-reviver";
-import { WidgetContextMenuProps } from "@components/widget-context-menu";
-import { WrapperProps } from "../components/absolute-wrapper";
-import { FixedWrapperProps } from "../components/fixed-wrapper";
-import { WidgetControlsProps } from "../components/widget-controls";
-import { WidgetProps } from "../components/widget";
-import { WorkspaceProps } from "../components/workspace";
 
 export interface WidgetScript {
   name: string;
@@ -14,16 +7,23 @@ export interface WidgetScript {
 
 export interface WidgetInstance {
   alias: string;
-  id: string;
   top: number;
   left: number;
   width: number;
   height: number;
 }
 
+export interface AppCollection {
+  [alias: string]: WidgetScript;
+}
+
+export interface AppInstances {
+  [id: string]: WidgetInstance;
+}
+
 export interface WorkspaceState {
-  widgetScripts: { [k: string]: WidgetScript };
-  widgetInstances: WidgetInstance[];
+  apps: AppCollection;
+  instances: AppInstances;
 }
 
 export interface Display {
@@ -31,15 +31,7 @@ export interface Display {
 }
 
 export interface WorkspaceStateSave {
-  instances: WidgetInstance[];
-}
-
-export interface WidgetBounds {
-  id: string;
-  top: number;
-  left: number;
-  width: number;
-  height: number;
+  instances: AppInstances;
 }
 
 export interface WorkspaceEdit {
@@ -47,11 +39,3 @@ export interface WorkspaceEdit {
 }
 
 export type Listener<E = any> = (ipcEvent: IpcRendererEvent, event: E) => void | Promise<void>;
-
-export type RevivableComponent =
-  | RevivableComponentType<"absolute-wrapper", WrapperProps, RevivableComponent>
-  | RevivableComponentType<"fixed-wrapper", FixedWrapperProps, RevivableComponent>
-  | RevivableComponentType<"widget-control", WidgetControlsProps, RevivableComponent>
-  | RevivableComponentType<"widget-context-menu", WidgetContextMenuProps, RevivableComponent>
-  | RevivableComponentType<"widget", WidgetProps, RevivableComponent>
-  | RevivableComponentType<"workspace", WorkspaceProps, RevivableComponent>;

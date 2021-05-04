@@ -4,7 +4,6 @@
   "main": "dist/backend/main.js",
   "license": "MIT",
   "devDependencies": {
-    "@koeroesi86/react-reviver": "^21.4.26-9aec7d3",
     "@types/lodash.throttle": "^4.1.6",
     "@types/react": "^17.0.4",
     "@types/styled-components": "^5.1.9",
