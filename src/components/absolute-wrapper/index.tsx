@@ -1,15 +1,19 @@
 import styled from "styled-components";
+import React from "react";
 
-export interface WrapperProps {
+export interface AbsoluteWrapperProps
+  extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   top: number;
   left: number;
   width: number;
   height: number;
 }
 
-const blockedProps = ["top", "left", "width", "height"];
+export const blockedProps = ["top", "left", "width", "height"];
 
-const AbsoluteWrapper = styled.div.withConfig<WrapperProps>({ shouldForwardProp: (p) => !blockedProps.includes(p) })`
+const AbsoluteWrapper = styled.div.withConfig<AbsoluteWrapperProps>({
+  shouldForwardProp: (p) => !blockedProps.includes(p),
+})`
   position: absolute;
   top: ${(props) => `${props.top}%`};
   left: ${(props) => `${props.left}%`};

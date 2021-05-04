@@ -24,6 +24,7 @@ export default {
       left: 83,
       width: 15,
       height: 20,
+      zIndex: 0,
     },
     "49e9c5b4-900a-4cf7-8f9e-310e34a94cf1": {
       alias: "448c0367-6847-5122-9862-e21c17b5cd40",
@@ -31,6 +32,7 @@ export default {
       left: 83,
       width: 15,
       height: 20,
+      zIndex: 0,
     },
   },
 } as WorkspaceState;

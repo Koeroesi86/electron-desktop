@@ -11,6 +11,7 @@ export interface WidgetInstance {
   left: number;
   width: number;
   height: number;
+  zIndex: number;
 }
 
 export interface AppCollection {

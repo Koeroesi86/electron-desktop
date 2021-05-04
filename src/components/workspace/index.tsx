@@ -24,6 +24,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
           width={instances[id].width}
           top={instances[id].top}
           height={instances[id].height}
+          zIndex={instances[id].zIndex}
           editing={editing}
           onChange={(bounds) => {
             setInstances({
