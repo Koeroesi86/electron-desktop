@@ -6,6 +6,7 @@ import FixedWrapper from "@components/fixed-wrapper";
 import WidgetControls from "@components/widget-controls";
 import Widget from "@components/widget";
 import { useScriptRegistry } from "@components/script-registry";
+import ContextMenuItem from "@components/context-menu-item";
 
 export interface WorkspaceProps {}
 
@@ -46,8 +47,44 @@ const Workspace: React.FC<WorkspaceProps> = () => {
         <WidgetContextMenu
           x={widgetContextMenu.x}
           y={widgetContextMenu.y}
-          onBlur={() => setWidgetContextmenu({ ...widgetContextMenu, show: false })}
-        />
+          onHide={() => setWidgetContextmenu({ ...widgetContextMenu, show: false })}
+        >
+          <ContextMenuItem
+            onClick={() => {
+              const instance = instances[widgetContextMenu.id];
+              setInstances({
+                ...instances,
+                [widgetContextMenu.id]: {
+                  ...instance,
+                  zIndex: instance.zIndex + 1,
+                },
+              });
+
+              setWidgetContextmenu({ ...widgetContextMenu, show: false });
+            }}
+          >
+            Bring forward
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => {
+              const instance = instances[widgetContextMenu.id];
+
+              if (instance.zIndex > 0) {
+                setInstances({
+                  ...instances,
+                  [widgetContextMenu.id]: {
+                    ...instance,
+                    zIndex: instance.zIndex - 1,
+                  },
+                });
+              }
+
+              setWidgetContextmenu({ ...widgetContextMenu, show: false });
+            }}
+          >
+            Bring backward
+          </ContextMenuItem>
+        </WidgetContextMenu>
       )}
     </FixedWrapper>
   );
