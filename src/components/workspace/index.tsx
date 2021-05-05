@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useWorkspace from "@hooks/useWorkspace";
 import useIsEditing from "@hooks/useIsEditing";
-import WidgetContextMenu from "@components/widget-context-menu";
+import ContextMenu from "@components/context-menu";
 import FixedWrapper from "@components/fixed-wrapper";
 import WidgetControls from "@components/widget-controls";
 import Widget from "@components/widget";
@@ -44,7 +44,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
         </WidgetControls>
       ))}
       {widgetContextMenu.show && (
-        <WidgetContextMenu
+        <ContextMenu
           x={widgetContextMenu.x}
           y={widgetContextMenu.y}
           onHide={() => setWidgetContextmenu({ ...widgetContextMenu, show: false })}
@@ -84,7 +84,7 @@ const Workspace: React.FC<WorkspaceProps> = () => {
           >
             Bring backward
           </ContextMenuItem>
-        </WidgetContextMenu>
+        </ContextMenu>
       )}
     </FixedWrapper>
   );

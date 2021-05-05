@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-export interface WidgetContextMenuProps {
+export interface ContextMenuProps {
   x: number;
   y: number;
   onHide: () => void | Promise<void>;
+  children: React.ReactNode;
 }
 
 const Wrapper = styled.div<{ x: number; y: number; show: boolean }>`
@@ -14,6 +15,7 @@ const Wrapper = styled.div<{ x: number; y: number; show: boolean }>`
   left: ${(props) => `${props.x}%`};
   opacity: ${({ show }) => (show ? 1 : 0)};
   z-index: 999999;
+  transition: opacity 0.2s ease-in-out;
 `;
 
 const Content = styled.div`
@@ -23,7 +25,7 @@ const Content = styled.div`
   background: #ffffff;
 `;
 
-const WidgetContextMenu: React.FC<WidgetContextMenuProps> = ({ x, y, onHide, children }) => {
+const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onHide, children }) => {
   const element = useRef<HTMLDivElement>();
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isVisible, setIsVisible] = useState(false);
@@ -37,9 +39,9 @@ const WidgetContextMenu: React.FC<WidgetContextMenuProps> = ({ x, y, onHide, chi
       }
     };
 
-    window.addEventListener("mouseup", listener);
+    window.addEventListener("mousedown", listener);
     return () => {
-      window.removeEventListener("mouseup", listener);
+      window.removeEventListener("mousedown", listener);
     };
   }, []);
 
@@ -57,7 +59,7 @@ const WidgetContextMenu: React.FC<WidgetContextMenuProps> = ({ x, y, onHide, chi
     return () => {
       setIsVisible(false);
     };
-  }, [x, y]);
+  }, [x, y, children]);
 
   return (
     <Wrapper y={position.top} x={position.left} ref={element} show={isVisible}>
@@ -66,10 +68,11 @@ const WidgetContextMenu: React.FC<WidgetContextMenuProps> = ({ x, y, onHide, chi
   );
 };
 
-WidgetContextMenu.propTypes = {
+ContextMenu.propTypes = {
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
   onHide: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
-export default WidgetContextMenu;
+export default ContextMenu;
