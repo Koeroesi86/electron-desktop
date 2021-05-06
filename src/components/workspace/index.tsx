@@ -10,11 +10,23 @@ import ContextMenuItem from "@components/context-menu-item";
 
 export interface WorkspaceProps {}
 
+interface WidgetContextMenuState {
+  show: boolean;
+  x: number;
+  y: number;
+  id: string;
+}
+
 const Workspace: React.FC<WorkspaceProps> = () => {
   const scriptRegistry = useScriptRegistry();
   const [instances, setInstances] = useWorkspace();
   const [editing] = useIsEditing();
-  const [widgetContextMenu, setWidgetContextmenu] = useState({ show: false, x: 0, y: 0, id: "" });
+  const [widgetContextMenu, setWidgetContextmenu] = useState<WidgetContextMenuState>({
+    show: false,
+    x: 0,
+    y: 0,
+    id: "",
+  });
 
   return (
     <FixedWrapper top={0} left={0} width={100} height={100}>
