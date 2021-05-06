@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import useWindowEvent from "@hooks/useWindowEvent";
 
 export interface ContextMenuProps {
   x: number;
@@ -30,20 +31,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onHide, children }) => 
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const listener = (e: MouseEvent) => {
-      const node = element.current;
-      // @ts-ignore
-      if (node && !node.isSameNode(e.target) && !node.contains(e.target)) {
-        onHide();
-      }
-    };
-
-    window.addEventListener("mousedown", listener);
-    return () => {
-      window.removeEventListener("mousedown", listener);
-    };
-  }, []);
+  useWindowEvent("mousedown", (e) => {
+    const node = element.current;
+    // @ts-ignore
+    if (node && !node.isSameNode(e.target) && !node.contains(e.target)) {
+      onHide();
+    }
+  });
 
   useEffect(() => {
     const node = element.current;
