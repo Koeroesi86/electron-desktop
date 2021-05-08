@@ -11,14 +11,19 @@ export interface AbsoluteWrapperProps
 
 export const blockedProps = ["top", "left", "width", "height"];
 
-const AbsoluteWrapper = styled.div.withConfig<AbsoluteWrapperProps>({
-  shouldForwardProp: (p) => !blockedProps.includes(p),
-})`
+const AbsoluteWrapper = styled.div
+  .attrs<AbsoluteWrapperProps>((props) => ({
+    style: {
+      top: `${props.top}%`,
+      left: `${props.left}%`,
+      width: `${props.width}%`,
+      height: `${props.height}%`,
+    },
+  }))
+  .withConfig<AbsoluteWrapperProps>({
+    shouldForwardProp: (p) => !blockedProps.includes(p),
+  })`
   position: absolute;
-  top: ${(props) => `${props.top}%`};
-  left: ${(props) => `${props.left}%`};
-  width: ${(props) => `${props.width}%`};
-  height: ${(props) => `${props.height}%`};
 `;
 
 export default AbsoluteWrapper;
