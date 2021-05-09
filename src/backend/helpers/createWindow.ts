@@ -55,32 +55,32 @@ const createWindow = async (props: WindowProps) => {
       workspaceStateChannel.dispatch(win.webContents, state);
     };
 
-    win.once("ready-to-show", async () => {
-      win.webContents.openDevTools({ mode: "detach" });
-      win.webContents.reload();
+    await new Promise((r) => win.once("ready-to-show", r));
 
-      // eslint-disable-next-line no-undef
-      let interval: NodeJS.Timeout;
+    win.webContents.openDevTools({ mode: "detach" });
+    win.webContents.reload();
 
-      win.webContents.addListener("did-finish-load", () => {
-        if (interval) clearInterval(interval);
-        interval = setInterval(sendState, 500);
-      });
+    // eslint-disable-next-line no-undef
+    let interval: NodeJS.Timeout;
 
-      workspaceStateAckChannel.subscribe((e) => {
-        if (e.sender.id === win.id) {
-          clearInterval(interval);
-          interval = undefined;
-          win.show();
-        }
-      });
+    win.webContents.addListener("did-finish-load", () => {
+      if (interval) clearInterval(interval);
+      interval = setInterval(sendState, 500);
+    });
 
-      widgetBoundsChannel.subscribe(async (e, payload) => {
-        const prevState = await workspaceStorage.get(props.workspaceId);
-        await workspaceStorage.update(props.workspaceId, {
-          ...prevState,
-          instances: payload.instances,
-        });
+    workspaceStateAckChannel.subscribe((e) => {
+      if (e.sender.id === win.id) {
+        clearInterval(interval);
+        interval = undefined;
+        win.show();
+      }
+    });
+
+    widgetBoundsChannel.subscribe(async (e, payload) => {
+      const prevState = await workspaceStorage.get(props.workspaceId);
+      await workspaceStorage.update(props.workspaceId, {
+        ...prevState,
+        instances: payload.instances,
       });
     });
   } catch (e) {
