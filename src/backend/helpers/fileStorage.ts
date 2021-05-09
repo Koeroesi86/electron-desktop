@@ -18,22 +18,23 @@ class FileStorage {
 
   throttledWrite: FileWrite;
 
-  private readonly writeThrottle: DebouncedFunc<FileWrite>;
+  private readonly writeThrottle: DebouncedFunc<() => void>;
 
   constructor(root: string, writeThrottleInterval: number = 5000) {
     this.root = root;
-    this.writeThrottle = throttle<FileWrite>(this.write, writeThrottleInterval);
+    this.writeThrottle = throttle(() => {
+      Object.keys(this.throttledStore).forEach((p) => this.write(p, this.throttledStore[p]));
+    }, writeThrottleInterval);
 
     this.throttledWrite = (fileName: string, data: string) => {
       if (this.throttledStore[fileName] !== data) {
         this.throttledStore[fileName] = data;
-        this.writeThrottle(fileName, data);
+        this.writeThrottle();
       }
     };
 
     process.on("exit", () => {
-      this.writeThrottle.cancel();
-      Object.keys(this.throttledStore).forEach((p) => this.write(p, this.throttledStore[p]));
+      this.writeThrottle.flush();
     });
   }
 
