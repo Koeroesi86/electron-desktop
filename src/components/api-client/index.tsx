@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { Adapter, ApiContext } from "./types";
 import IpcClientAdapter from "./ipc-client-adapter";
 
@@ -31,12 +32,13 @@ export enum AdapterVersion {
 
 interface ProviderProps {
   adapter: AdapterVersion;
+  children: React.ReactNode;
 }
 
-const ApiClientProvider: React.FC<ProviderProps> = ({ children, adapter }) => {
+const ApiClientProvider: React.FC<ProviderProps> = ({ children, adapter: adapterVersion }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   useEffect(() => {
-    switch (adapter) {
+    switch (adapterVersion) {
       case AdapterVersion.ipc:
       default:
         setAdapter(new IpcClientAdapter());
@@ -44,6 +46,11 @@ const ApiClientProvider: React.FC<ProviderProps> = ({ children, adapter }) => {
     setHasLoaded(true);
   }, [adapter]);
   return <ApiClientContext.Provider value={context}>{hasLoaded ? children : null}</ApiClientContext.Provider>;
+};
+
+ApiClientProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+  adapter: PropTypes.oneOf(Object.values(AdapterVersion)).isRequired,
 };
 
 export const useApiClient = (): ApiContext => useContext<ApiContext>(ApiClientContext);

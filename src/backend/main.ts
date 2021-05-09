@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, MenuItem, Tray, screen } from "electron";
 import path from "path";
-import { AppInstances, WidgetInstance, WorkspaceEdit, WorkspaceState } from "@app-types";
+import { AppInstances, WorkspaceEdit, WorkspaceState } from "@app-types";
 import {
   TRAY_ICON_ID,
   WIDGET_SAVE_BOUNDS_CHANNEL,

@@ -26,7 +26,6 @@ class FileStorage {
 
     this.throttledWrite = (fileName: string, data: string) => {
       if (this.throttledStore[fileName] !== data) {
-        console.log("detected change", fileName, data);
         this.throttledStore[fileName] = data;
         this.writeThrottle(fileName, data);
       }
