@@ -56,7 +56,6 @@ const createWindow = async (props: WindowProps) => {
         webviewTag: true,
       },
     });
-    const state = await workspaceStorage.get(props.workspaceId);
 
     await win.loadFile(path.resolve(__dirname, "../frontend/main.html"));
 
@@ -64,7 +63,8 @@ const createWindow = async (props: WindowProps) => {
       workspaceStateChannel.dispatch(win.webContents, s);
     });
 
-    const sendState = () => {
+    const sendState = async () => {
+      const state = await workspaceStorage.get(props.workspaceId);
       workspaceStateChannel.dispatch(win.webContents, state);
     };
 
