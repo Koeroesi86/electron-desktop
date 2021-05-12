@@ -9,13 +9,13 @@ const configStorage = {
 
     fileStorage.throttledWrite(fileName, target);
   },
-  exists: async (fileName: string): Promise<boolean> => fileStorage.exists(fileName),
+  exists: async (fileName: string): Promise<boolean> => await fileStorage.exists(fileName),
   get: async <T = any>(fileName: string, defaultValue: T): Promise<T> => {
     if (!(await configStorage.exists(fileName))) {
       await configStorage.set(fileName, defaultValue);
     }
 
-    const content = fileStorage.read(fileName);
+    const content = await fileStorage.read(fileName);
 
     return JSON.parse(content) as T;
   },
