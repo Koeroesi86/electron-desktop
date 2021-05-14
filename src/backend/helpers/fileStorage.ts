@@ -1,55 +1,16 @@
 import fs from "fs";
 import path from "path";
-import throttle from "lodash.throttle";
+// @ts-ignore
+import { InmemoryCache } from "@koeroesi86/cache";
 
 type FileWrite = (fileName: string, data: string) => Promise<void>;
 
-// from node_modules/@types/lodash/common/function.d.ts:371
-interface DebouncedFunc<T extends (...args: any[]) => any> {
-  (...args: Parameters<T>): ReturnType<T> | undefined;
-  cancel(): void;
-  flush(): ReturnType<T> | undefined;
-}
-
 interface CacheProvider<T = any> {
-  has: (key: string) => Promise<boolean>;
-  get: (key: string) => Promise<T>;
-  set: (key: string, data: T, interval?: number) => Promise<void>;
-  all: () => Promise<{ [key: string]: T }>;
-  flush: () => Promise<void>;
-}
-
-class InmemoryCache<T = any> implements CacheProvider<T> {
-  private store: { [key: string]: string } = {};
-
-  has = async (key) => typeof this.store[key] === "string";
-
-  get = async (key) => {
-    if (!(await this.has(key))) return undefined;
-
-    return JSON.parse(this.store[key]) as T;
-  };
-
-  set = async (key, data: T, interval?) => {
-    this.store[key] = JSON.stringify(data);
-
-    if (interval > 0) {
-      setTimeout(() => {
-        this.store[key] = undefined;
-        delete this.store[key];
-      }, interval);
-    }
-  };
-
-  all = async () =>
-    Object.keys(this.store).reduce((result, key) => ({ ...result, [key]: JSON.parse(this.store[key]) as T }), {});
-
-  flush = async () => {
-    Object.keys(this.store).forEach((key) => {
-      this.store[key] = undefined;
-      delete this.store[key];
-    });
-  };
+  has: (key: string) => boolean;
+  get: (key: string) => T;
+  set: (key: string, data: T, interval?: number) => void;
+  all: () => { [key: string]: T };
+  flush: () => void;
 }
 
 class FileStorage {
@@ -59,27 +20,21 @@ class FileStorage {
 
   throttledWrite: FileWrite;
 
-  private readonly writeThrottle: DebouncedFunc<() => void>;
-
   constructor(root: string, writeThrottleInterval: number = 5000) {
     this.root = root;
-    this.cache = new InmemoryCache<string>();
-
-    this.writeThrottle = throttle(async () => {
-      const all = await this.cache.all();
-      Object.keys(all).forEach((p) => this.write(p, all[p]));
-      await this.cache.flush();
-    }, writeThrottleInterval);
+    this.cache = new InmemoryCache<string>({}, (p, data) => {
+      this.write(p, data);
+    });
 
     this.throttledWrite = async (fileName: string, data: string) => {
-      if ((await this.cache.get(fileName)) !== data) {
-        await this.cache.set(fileName, data);
-        this.writeThrottle();
+      if (this.cache.get(fileName) !== data) {
+        this.cache.set(fileName, data, writeThrottleInterval);
       }
     };
 
     process.on("exit", () => {
-      this.writeThrottle.flush();
+      const all = this.cache.all();
+      Object.keys(all).forEach((p) => this.write(p, all[p]));
     });
   }
 

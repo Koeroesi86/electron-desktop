@@ -186,6 +186,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@koeroesi86/cache@^21.5.5-f6599b3":
+  version "21.5.5-f6599b3"
+  resolved "https://registry.yarnpkg.com/@koeroesi86/cache/-/cache-21.5.5-f6599b3.tgz#3cd9e9c59dace928e5dbcec0800ea2d9de498ec5"
+  integrity sha512-gpim84CIrtvh7/NG8f6u68PzLpRPHdCMRgvfI5exLaIXT6awFPPw/e4cUY3XyumG4Uv8Y+G9hLP/KoJGOJs97g==
+
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.4.tgz#d4b3549a5db5de2683e0c1071ab4f140904bbf69"
@@ -2249,11 +2254,6 @@ lodash.flatten@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.flatten/-/lodash.flatten-4.4.0.tgz#f31c22225a9632d2bbf8e4addbef240aa765a61f"
   integrity sha1-8xwiIlqWMtK7+OSt2+8kCqdlph8=
-
-lodash.throttle@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
-  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
 lodash.truncate@^4.4.2:
   version "4.4.2"
