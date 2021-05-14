@@ -3,7 +3,7 @@ import path from "path";
 // @ts-ignore
 import { InmemoryCache } from "@koeroesi86/cache";
 
-type FileWrite = (fileName: string, data: string) => Promise<void>;
+type FileWrite = (fileName: string, data: string) => void;
 
 interface CacheProvider<T = any> {
   has: (key: string) => boolean;
@@ -45,14 +45,14 @@ class FileStorage {
 
     if (!content) {
       content = fs.readFileSync(this.resolvePath(fileName), "utf8");
-      await this.cache.set(fileName, content);
+      this.cache.set(fileName, content);
     }
 
     return content;
   };
 
   exists = async (fileName: string): Promise<boolean> => {
-    if (await this.cache.has(fileName)) {
+    if (this.cache.has(fileName)) {
       return true;
     }
 
