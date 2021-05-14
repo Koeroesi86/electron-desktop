@@ -41,7 +41,7 @@ class FileStorage {
   private resolvePath = (fileName: string) => path.resolve(this.root, fileName);
 
   read = async (fileName: string): Promise<string> => {
-    let content = await this.cache.get(fileName);
+    let content = this.cache.get(fileName);
 
     if (!content) {
       content = fs.readFileSync(this.resolvePath(fileName), "utf8");
